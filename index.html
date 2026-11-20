@@ -95,7 +95,7 @@
   /* --- walking chibi --- */
   .walker { opacity: 0; transition: opacity .3s; pointer-events: none; }
   .walker.on { opacity: 1; }
-  .wflip { transition: transform .25s ease; }
+  .wflip { transition: none; }
   .walker .thigh { transform-box: fill-box; transform-origin: 50% 0; animation: thighSwing .9s ease-in-out infinite; }
   .walker .thigh.b { animation-delay: -.45s; }
   .walker .shin { transform-box: fill-box; transform-origin: 50% 0; animation: shinSwing .9s ease-in-out infinite; }
@@ -105,9 +105,9 @@
   .walker.still .thigh, .walker.still .shin, .walker.still .armW { animation: none; }
   .wbob { animation: wbob .45s ease-in-out infinite; }
   .walker.still .wbob { animation: breathe 2.4s ease-in-out infinite; }
-  @keyframes thighSwing { 0%,100% { transform: rotate(24deg); } 50% { transform: rotate(-24deg); } }
-  @keyframes shinSwing { 0%,100% { transform: rotate(-34deg); } 35% { transform: rotate(6deg); } 50% { transform: rotate(30deg); } }
-  @keyframes armSwing { 0%,100% { transform: rotate(-16deg); } 50% { transform: rotate(16deg); } }
+  @keyframes thighSwing { 0%,100% { transform: rotate(16deg); } 50% { transform: rotate(-16deg); } }
+  @keyframes shinSwing { 0%,100% { transform: rotate(-26deg); } 50% { transform: rotate(2deg); } }
+  @keyframes armSwing { 0%,100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
   @keyframes wbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
   @keyframes breathe { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-1px) scaleY(1.02); } }
   /* sipping / watering props shown only in that state */
@@ -326,7 +326,7 @@
   <ellipse cx="225" cy="712" rx="34" ry="10" fill="#c98d4e"/>
   <rect x="216" y="700" width="8" height="10" rx="2" fill="#fff" stroke="#d8cbb2"/>
   <rect x="230" y="702" width="8" height="8" rx="2" fill="#e8b64c"/>
-  <g id="loungeBubble" opacity="0" transform="translate(105,612)">
+  <g id="loungeBubble" opacity="0" transform="translate(105,588)">
     <rect x="-75" y="0" width="150" height="38" rx="12" fill="#fff" stroke="#eadfc9"/>
     <text id="loungeText" x="0" y="24" font-size="12.5" text-anchor="middle" fill="#2b2118">☕ ngopi dulu…</text>
     <polygon points="-7,38 7,38 0,47" fill="#fff" stroke="#eadfc9"/>
@@ -465,13 +465,13 @@ function accWalk(id) {
   }
 }
 /* dark name-tag pill like the reference game: colored dot + name + code */
-function nameTag(label, color, sub) {
+function nameTag(label, color, sub, dy = 6) {
   const text = sub ? `${label} ${sub}` : label;
-  const w = 26 + text.length * 5.6;
+  const w = 22 + text.length * 5.2;
   return `<g class="nametag">
-    <rect x="${-w / 2}" y="4" width="${w}" height="17" rx="8.5" fill="#2b2118" opacity=".94"/>
-    <circle cx="${-w / 2 + 9}" cy="12.5" r="3.5" fill="${color}"/>
-    <text x="${-w / 2 + 17}" y="16" font-size="10" font-weight="700" fill="#fff">${text}</text>
+    <rect x="${-w / 2}" y="${dy}" width="${w}" height="17" rx="8.5" fill="#2b2118" opacity=".94"/>
+    <circle cx="${-w / 2 + 8}" cy="${dy + 8.5}" r="3.5" fill="${color}"/>
+    <text x="${-w / 2 + 16}" y="${dy + 11.5}" font-size="9" font-weight="700" fill="#fff">${text}</text>
   </g>`;
 }
 /* seated arm: shoulder (sx,sy), elbow (ex,ey), hand (hx,hy); forearm group animates when typing */
@@ -479,11 +479,11 @@ function seatArm(side, sx, sy, ex, ey, hx, hy, shirt, typing) {
   const cls = side === 'L' ? 'armL' : 'armR';
   const faCls = side === 'L' ? 'fa-l' : 'fa-r';
   return `<g class="${cls}" style="transform-origin: ${sx}px ${sy}px">
-    <path d="M ${sx} ${sy} L ${ex} ${ey}" stroke="${shirt}" stroke-width="6.5" stroke-linecap="round" fill="none"/>
-    <circle cx="${ex}" cy="${ey}" r="3.4" fill="${shirt}"/>
+    <path d="M ${sx} ${sy} L ${ex} ${ey}" stroke="${shirt}" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="${ex}" cy="${ey}" r="4" fill="${shirt}"/>
     <g class="${faCls}" style="transform-origin: ${ex}px ${ey}px">
-      <path d="M ${ex} ${ey} L ${hx} ${hy}" stroke="${shirt}" stroke-width="5.5" stroke-linecap="round" fill="none"/>
-      <circle cx="${hx}" cy="${hy}" r="3.2" fill="#f2c89b"/>
+      <path d="M ${ex} ${ey} L ${hx} ${hy}" stroke="${shirt}" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <circle cx="${hx}" cy="${hy}" r="4" fill="#f2c89b"/>
     </g>
   </g>`;
 }
@@ -495,11 +495,11 @@ function buildSeatFigure(r, opts = {}) {
   const shirt = r.color, skin = r.skin, hair = r.hair;
   const plaid = r.plaid ? `<rect x="-3" y="-52" width="6" height="28" fill="#000" opacity=".18"/><rect x="-13" y="-40" width="26" height="4" fill="#000" opacity=".18"/>` : '';
   const armL = r.armStyle === 'rest'
-    ? seatArm('L', -11, -44, -13, -26, -14, -4, shirt, false)
-    : seatArm('L', -11, -44, -8, -24, -4, 4, shirt, true);
+    ? seatArm('L', -11, -44, -13, -28, -13, -12, shirt, false)
+    : seatArm('L', -11, -44, -9, -26, -5, -8, shirt, true);
   const armR = r.armStyle === 'onehand'
-    ? seatArm('R', 11, -44, 12, -26, 4, -6, shirt, false)
-    : seatArm('R', 11, -44, 8, -24, 4, 4, shirt, true);
+    ? seatArm('R', 11, -44, 12, -28, 10, -12, shirt, false)
+    : seatArm('R', 11, -44, 9, -26, 5, -8, shirt, true);
   const tag = opts.noTag ? '' : nameTag(r.short, r.color, r.kd);
   g.innerHTML = `
     <g transform="scale(${s})">
@@ -534,19 +534,35 @@ function buildWalker(r) {
       <ellipse cx="0" cy="2" rx="15" ry="4.5" fill="#000" opacity=".12"/>
       <g class="wlean" style="transform: rotate(6deg); transform-origin: 0px -30px">
         <g class="wbob">
-          <g class="thigh a"><rect x="-7" y="-30" width="6" height="17" rx="3" fill="${pants}"/></g>
-          <g class="thigh b"><rect x="1" y="-30" width="6" height="17" rx="3" fill="${pants}"/></g>
-          <g class="shin a"><rect x="-6.5" y="-14" width="6" height="15" rx="3" fill="${pants}"/><ellipse cx="-3.5" cy="1" rx="4" ry="2" fill="#262626"/></g>
-          <g class="shin b"><rect x="0.5" y="-14" width="6" height="15" rx="3" fill="${pants}"/><ellipse cx="3.5" cy="1" rx="4" ry="2" fill="#262626"/></g>
-          <g class="armW a" style="transform-origin: -11px -46px">
-            <rect x="-14" y="-46" width="6" height="16" rx="3" fill="${shirt}"/>
-            <g style="transform: rotate(22deg); transform-origin: -11px -30px"><rect x="-14" y="-30" width="5.5" height="14" rx="2.75" fill="${shirt}"/><circle cx="-11" cy="-16" r="3" fill="${skin}"/></g>
+          <g class="thigh a">
+            <rect x="-11" y="-30" width="11" height="16" rx="5.5" fill="${pants}"/>
+            <g class="shin a">
+              <rect x="-10.5" y="-15" width="10" height="15" rx="5" fill="${pants}"/>
+              <ellipse cx="-5.5" cy="1" rx="5.5" ry="3" fill="#262626"/>
+            </g>
           </g>
-          <g class="armW b" style="transform-origin: 11px -46px">
-            <rect x="8" y="-46" width="6" height="16" rx="3" fill="${shirt}"/>
-            <g style="transform: rotate(-22deg); transform-origin: 11px -30px"><rect x="8.5" y="-30" width="5.5" height="14" rx="2.75" fill="${shirt}"/><circle cx="11" cy="-16" r="3" fill="${skin}"/></g>
+          <g class="thigh b">
+            <rect x="0" y="-30" width="11" height="16" rx="5.5" fill="${pants}"/>
+            <g class="shin b">
+              <rect x="0.5" y="-15" width="10" height="15" rx="5" fill="${pants}"/>
+              <ellipse cx="5.5" cy="1" rx="5.5" ry="3" fill="#262626"/>
+            </g>
           </g>
-          <rect x="-12" y="-52" width="24" height="25" rx="9" fill="${shirt}"/>
+          <g class="armW a">
+            <rect x="-15" y="-54" width="10" height="18" rx="5" fill="${shirt}"/>
+            <g class="faW" style="transform: rotate(14deg); transform-origin: -10px -36px">
+              <rect x="-14.5" y="-37" width="9" height="14" rx="4.5" fill="${shirt}"/>
+              <circle cx="-10" cy="-23" r="4.5" fill="${skin}"/>
+            </g>
+          </g>
+          <g class="armW b">
+            <rect x="5" y="-54" width="10" height="18" rx="5" fill="${shirt}"/>
+            <g class="faW" style="transform: rotate(-14deg); transform-origin: 10px -36px">
+              <rect x="5.5" y="-37" width="9" height="14" rx="4.5" fill="${shirt}"/>
+              <circle cx="10" cy="-23" r="4.5" fill="${skin}"/>
+            </g>
+          </g>
+          <rect x="-13" y="-52" width="26" height="25" rx="10" fill="${shirt}"/>
           <rect x="9" y="-38" width="12" height="15" rx="2" fill="#fff" stroke="#d8cbb2"/>
           <circle cx="0" cy="-60" r="11" fill="${skin}"/>
           ${hairSVG(r.hairStyle, r.hair, 'walk')}
@@ -565,7 +581,7 @@ function buildWalker(r) {
         </g>
       </g>
     </g>
-    ${nameTag(r.short, r.color, r.kd)}
+    ${nameTag(r.short, r.color, r.kd, -104)}
    </g>`;
   return g;
 }
@@ -590,7 +606,7 @@ ROLES.forEach(r => {
     `<text x="${x + 31}" y="16" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">${r.step.toUpperCase()}</text>` +
     `<text class="bl1" x="0" y="36" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[0]}</text>` +
     `<text class="bl2" x="0" y="51" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[1]}</text>` +
-    `<polygon points="-7,${h} 7,${h} 0,${h + 9}" fill="#fff" stroke="#eadfc9"/>`;
+    `<polygon points="-7,${h} 7,${h} 0,${h + 10}" fill="#fff" stroke="#eadfc9"/>`;
   wrap.appendChild(g);
   bubblesEl.appendChild(wrap);
   r.bubbleWrap = wrap; r.bl1 = g.querySelector('.bl1'); r.bl2 = g.querySelector('.bl2');
@@ -639,17 +655,24 @@ const SPEED = 85;
 const MAX_WALKERS = 4;
 const SPOTS = {
   meeting: { x: 200, y: 196, label: 'meja meeting', kind: 'deliver' },
-  lounge: { x: 150, y: 700, label: 'lounge', kind: 'chat' },
-  coffee: { x: 342, y: 664, label: 'coffee corner', kind: 'coffee' },
-  plant: { x: 48, y: 322, label: 'tanaman', kind: 'plant' },
+  lounge: { x: 170, y: 700, label: 'lounge', kind: 'chat' },
+  coffee: { x: 342, y: 638, label: 'coffee corner', kind: 'coffee' },
+  plant: { x: 48, y: 308, label: 'tanaman', kind: 'plant' },
 };
 function deskSpot(t) {
   return { x: t.x < 200 ? t.x + 72 : t.x - 72, y: t.y + 22, label: 'meja ' + t.short, kind: 'deliver' };
 }
+const LANES = [196, 308, 418, 528, 638, 700];
+function nearestLane(y) { let best = LANES[0]; for (const L of LANES) if (Math.abs(L - y) < Math.abs(best - y)) best = L; return best; }
 function route(from, to) {
   const pts = [];
-  if (from.x !== 200) pts.push({ x: 200, y: from.y });
-  if (to.x !== 200) pts.push({ x: 200, y: to.y });
+  const fl = nearestLane(from.y), tl = nearestLane(to.y);
+  pts.push({ x: from.x, y: fl });
+  if (fl !== tl) {
+    if (from.x !== 200) pts.push({ x: 200, y: fl });
+    pts.push({ x: 200, y: tl });
+  }
+  if (to.x !== 200) pts.push({ x: to.x, y: tl });
   pts.push({ x: to.x, y: to.y });
   return pts.filter((p, i) => i === 0 || p.x !== pts[i - 1].x || p.y !== pts[i - 1].y);
 }
@@ -768,7 +791,8 @@ function frame(now) {
       if (r.state === 'seated') { r.idleT -= dt; if (r.idleT <= 0 && !startTrip(r)) r.idleT = 0.5; }
       else stepWalk(r, dt);
       const bx = Math.max(92, Math.min(308, r.pos.x));
-      r.bubbleWrap.setAttribute('transform', `translate(${bx},${r.pos.y - 126})`);
+      const by = r.state === 'seated' ? r.pos.y - 150 : r.pos.y - 170;
+      r.bubbleWrap.setAttribute('transform', `translate(${bx},${by})`);
       r.walker.setAttribute('transform', `translate(${r.pos.x},${r.pos.y})`);
       const flip = r.walker.querySelector('.wflip');
       if (flip) flip.style.transform = r.facing < 0 ? 'scale(-1,1)' : 'scale(1,1)';
@@ -847,7 +871,7 @@ let loungeI = 0;
 if (!REDUCED) {
   setInterval(() => {
     loungeText.textContent = LOUNGE_LINES[loungeI % LOUNGE_LINES.length];
-    loungeBubble.setAttribute('transform', `translate(${loungeI % 2 === 0 ? 78 : 132},612)`);
+    loungeBubble.setAttribute('transform', `translate(${loungeI % 2 === 0 ? 78 : 132},588)`);
     loungeI++;
     loungeBubble.style.opacity = 1;
     setTimeout(() => { loungeBubble.style.opacity = 0; }, 2600);
