@@ -56,6 +56,16 @@
   .bubble { opacity: 0; transform: translateY(6px) scale(.92); transform-box: fill-box;
     transform-origin: 50% 100%; transition: opacity .35s, transform .35s; pointer-events: none; }
   .bubble.on { opacity: 1; transform: translateY(0) scale(1); }
+  .seatFig { transition: opacity .3s; }
+  /* --- walking character --- */
+  .walker { opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .walker.on { opacity: 1; }
+  .walker .leg { transform-box: fill-box; transform-origin: 50% 0; animation: swing .45s ease-in-out infinite alternate; }
+  .walker .leg.b { animation-delay: -.225s; }
+  .walker.still .leg, .walker.still .wbob { animation: none; }
+  .wbob { animation: wbob .45s ease-in-out infinite; }
+  @keyframes swing { from { transform: rotate(24deg); } to { transform: rotate(-24deg); } }
+  @keyframes wbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
   @media (prefers-reduced-motion: reduce) {
     .bob, .screen, .plant { animation: none; }
   }
@@ -64,7 +74,7 @@
 <body>
 <header>
   <h1>VIRTUAL OFFICE</h1>
-  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Lihat mereka kerja, live.</p>
+  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Mereka jalan antar meja sambil bawa handoff, live.</p>
 </header>
 <div class="rail" id="rail" aria-label="Tahap sprint">
   <span data-step="Think">THINK</span><span data-step="Plan">PLAN</span><span data-step="Build">BUILD</span><span data-step="Review">REVIEW</span><span data-step="Test">TEST</span><span data-step="Ship">SHIP</span><span data-step="Reflect">REFLECT</span>
@@ -75,14 +85,8 @@
     <clipPath id="floorClip">
       <polygon points="30,60 370,60 392,360 370,700 30,700 8,360"/>
     </clipPath>
-    <!-- Reusable seated character + desk. Shirt/hair/skin set per <use> via CSS vars. -->
-    <g id="deskUnit">
-      <rect x="-10" y="-34" width="28" height="34" rx="7" fill="#8a6a42"/>
-      <g class="bob">
-        <rect x="-12" y="-26" width="34" height="42" rx="11" style="fill:var(--shirt,#888)"/>
-        <circle cx="5" cy="-38" r="12" style="fill:var(--skin,#f2c89b)"/>
-        <path d="M -7 -38 a 12 12 0 0 1 24 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="5" stroke-linecap="round"/>
-      </g>
+    <!-- Desk only (no figure). Seated figure is separate so it can hide while walking. -->
+    <g id="deskOnly">
       <polygon points="-58,8 58,8 70,26 -46,26" fill="#c98d4e"/>
       <polygon points="-46,26 70,26 70,52 -46,52" fill="#a06a35"/>
       <polygon points="-58,8 58,8 58,12 -58,12" fill="#e0aa6b"/>
@@ -90,6 +94,27 @@
       <rect x="-68" y="-40" width="36" height="26" rx="2" fill="#1d2b36"/>
       <rect class="screen" x="-65" y="-37" width="30" height="20" rx="1" fill="#8fd4ff"/>
       <polygon points="-30,14 6,14 12,24 -24,24" fill="#5d4030"/>
+    </g>
+    <!-- Seated figure (chair + upper body). Shirt/hair/skin set per <use> via CSS vars. -->
+    <g id="seatFig">
+      <rect x="-10" y="-34" width="28" height="34" rx="7" fill="#8a6a42"/>
+      <g class="bob">
+        <rect x="-12" y="-26" width="34" height="42" rx="11" style="fill:var(--shirt,#888)"/>
+        <circle cx="5" cy="-38" r="12" style="fill:var(--skin,#f2c89b)"/>
+        <path d="M -7 -38 a 12 12 0 0 1 24 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    </g>
+    <!-- Walking figure (feet at 0,0): swinging legs, bobbing body, carries a paper (the handoff). -->
+    <g id="walker">
+      <ellipse cx="0" cy="2" rx="15" ry="4.5" fill="#000" opacity=".12"/>
+      <g class="wbob">
+        <rect class="leg a" x="-8" y="-17" width="7" height="18" rx="3" style="fill:var(--pants,#3a3a3a)"/>
+        <rect class="leg b" x="1" y="-17" width="7" height="18" rx="3" style="fill:var(--pants,#3a3a3a)"/>
+        <rect x="-13" y="-40" width="26" height="26" rx="9" style="fill:var(--shirt,#888)"/>
+        <rect x="9" y="-32" width="12" height="15" rx="2" fill="#fff" stroke="#d8cbb2"/>
+        <circle cx="0" cy="-50" r="11" style="fill:var(--skin,#f2c89b)"/>
+        <path d="M -11 -50 a 11 11 0 0 1 22 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="4.5" stroke-linecap="round"/>
+      </g>
     </g>
     <!-- Potted plant -->
     <g id="plant">
@@ -133,11 +158,11 @@
     <ellipse cx="200" cy="134" rx="102" ry="30" fill="#c98d4e"/>
     <ellipse cx="200" cy="134" rx="86" ry="22" fill="#dbab72"/>
     <rect x="168" y="120" width="64" height="10" rx="2" fill="#5d4030"/>
-    <g class="bob">
+    <g class="seatFig" id="seat-office-hours"><g class="bob">
       <rect x="186" y="150" width="28" height="34" rx="10" style="fill:#e74c3c"/>
       <circle cx="200" cy="140" r="12" fill="#f2c89b"/>
       <path d="M 188 140 a 12 12 0 0 1 24 0" fill="none" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round"/>
-    </g>
+    </g></g>
     <rect x="150" y="120" width="16" height="11" rx="1" fill="#1d2b36"/>
     <rect class="screen" x="152" y="122" width="12" height="7" fill="#8fd4ff"/>
     <g font-size="11" font-weight="700" text-anchor="middle" fill="#2b2118">
@@ -146,15 +171,15 @@
     </g>
   </g>
 
-  <!-- Desk rows: 2 cols x 4 rows -->
-  <g data-role="planner" transform="translate(100,250)"><use href="#deskUnit" style="--shirt:#3498db;--hair:#3b2f2f;--skin:#f2c89b"/></g>
-  <g data-role="builder" transform="translate(300,250)"><use href="#deskUnit" style="--shirt:#f39c12;--hair:#1f1f1f;--skin:#e8b88a"/></g>
-  <g data-role="reviewer" transform="translate(100,360)"><use href="#deskUnit" style="--shirt:#9b59b6;--hair:#4a2c14;--skin:#f2c89b"/></g>
-  <g data-role="qa" transform="translate(300,360)"><use href="#deskUnit" style="--shirt:#1abc9c;--hair:#2c2c2c;--skin:#d9a06b"/></g>
-  <g data-role="security-officer" transform="translate(100,470)"><use href="#deskUnit" style="--shirt:#2c3e50;--hair:#111111;--skin:#f2c89b"/></g>
-  <g data-role="finance-officer" transform="translate(300,470)"><use href="#deskUnit" style="--shirt:#27ae60;--hair:#5b3a1e;--skin:#e8b88a"/></g>
-  <g data-role="content-creator" transform="translate(100,580)"><use href="#deskUnit" style="--shirt:#e91e63;--hair:#2c2c2c;--skin:#f2c89b"/></g>
-  <g data-role="release-engineer" transform="translate(300,580)"><use href="#deskUnit" style="--shirt:#00bcd4;--hair:#3b2f2f;--skin:#d9a06b"/></g>
+  <!-- Desk rows: 2 cols x 4 rows (desk + separate seated figure) -->
+  <g data-role="planner" transform="translate(100,250)"><use href="#deskOnly"/><g class="seatFig" id="seat-planner"><use href="#seatFig" style="--shirt:#3498db;--hair:#3b2f2f;--skin:#f2c89b"/></g></g>
+  <g data-role="builder" transform="translate(300,250)"><use href="#deskOnly"/><g class="seatFig" id="seat-builder"><use href="#seatFig" style="--shirt:#f39c12;--hair:#1f1f1f;--skin:#e8b88a"/></g></g>
+  <g data-role="reviewer" transform="translate(100,360)"><use href="#deskOnly"/><g class="seatFig" id="seat-reviewer"><use href="#seatFig" style="--shirt:#9b59b6;--hair:#4a2c14;--skin:#f2c89b"/></g></g>
+  <g data-role="qa" transform="translate(300,360)"><use href="#deskOnly"/><g class="seatFig" id="seat-qa"><use href="#seatFig" style="--shirt:#1abc9c;--hair:#2c2c2c;--skin:#d9a06b"/></g></g>
+  <g data-role="security-officer" transform="translate(100,470)"><use href="#deskOnly"/><g class="seatFig" id="seat-security-officer"><use href="#seatFig" style="--shirt:#2c3e50;--hair:#111111;--skin:#f2c89b"/></g></g>
+  <g data-role="finance-officer" transform="translate(300,470)"><use href="#deskOnly"/><g class="seatFig" id="seat-finance-officer"><use href="#seatFig" style="--shirt:#27ae60;--hair:#5b3a1e;--skin:#e8b88a"/></g></g>
+  <g data-role="content-creator" transform="translate(100,580)"><use href="#deskOnly"/><g class="seatFig" id="seat-content-creator"><use href="#seatFig" style="--shirt:#e91e63;--hair:#2c2c2c;--skin:#f2c89b"/></g></g>
+  <g data-role="release-engineer" transform="translate(300,580)"><use href="#deskOnly"/><g class="seatFig" id="seat-release-engineer"><use href="#seatFig" style="--shirt:#00bcd4;--hair:#3b2f2f;--skin:#d9a06b"/></g></g>
 
   <!-- Active-character rings (one per role, toggled by JS) -->
   <g fill="none" stroke="#b3541e" stroke-width="2" stroke-dasharray="6 4">
@@ -190,6 +215,10 @@
   <g transform="translate(368,300)"><use href="#plant"/></g>
   <g transform="translate(32,300)"><use href="#plant"/></g>
 
+  <!-- Walking characters (JS-driven, sambil bawa handoff) -->
+  <g id="walkers"></g>
+  <ellipse id="walkRing" cx="0" cy="0" rx="24" ry="7" fill="none" stroke="#b3541e" stroke-width="2" stroke-dasharray="5 4" opacity="0"/>
+
   <!-- Chat bubbles (JS fills text, toggles .on) -->
   <g id="bubbles"></g>
 </svg>
@@ -205,23 +234,23 @@
 
 <script>
 const ROLES = [
-  { id:'office-hours', short:'CEO', color:'#e74c3c', step:'Think', x:200, y:150, file:'.team/brief.md',
+  { id:'office-hours', short:'CEO', color:'#e74c3c', hair:'#2c2c2c', skin:'#f2c89b', step:'Think', x:200, y:150, file:'.team/brief.md', shortFile:'brief.md',
     lines:['Brief udah siap,','lanjut ke planner'], status:'CEO lagi nulis <b>brief.md</b>…' },
-  { id:'planner', short:'Planner', color:'#3498db', step:'Plan', x:100, y:250, file:'.team/design.md',
+  { id:'planner', short:'Planner', color:'#3498db', hair:'#3b2f2f', skin:'#f2c89b', step:'Plan', x:100, y:250, file:'.team/design.md', shortFile:'design.md',
     lines:['Desain selesai,','builder gas!'], status:'Planner lagi nulis <b>design.md</b>…' },
-  { id:'builder', short:'Builder', color:'#f39c12', step:'Build', x:300, y:250, file:'.team/build-log.md',
+  { id:'builder', short:'Builder', color:'#f39c12', hair:'#1f1f1f', skin:'#e8b88a', step:'Build', x:300, y:250, file:'.team/build-log.md', shortFile:'build-log.md',
     lines:['Build kelar,','cek review ya'], status:'Builder lagi nulis <b>build-log.md</b>…' },
-  { id:'reviewer', short:'Reviewer', color:'#9b59b6', step:'Review', x:100, y:360, file:'.team/review.md',
+  { id:'reviewer', short:'Reviewer', color:'#9b59b6', hair:'#4a2c14', skin:'#f2c89b', step:'Review', x:100, y:360, file:'.team/review.md', shortFile:'review.md',
     lines:['Review oke,','lanjut QA'], status:'Reviewer lagi nulis <b>review.md</b>…' },
-  { id:'qa', short:'QA', color:'#1abc9c', step:'Test', x:300, y:360, file:'.team/qa-report.md',
+  { id:'qa', short:'QA', color:'#1abc9c', hair:'#2c2c2c', skin:'#d9a06b', step:'Test', x:300, y:360, file:'.team/qa-report.md', shortFile:'qa-report.md',
     lines:['QA lolos,','semua aman'], status:'QA lagi nulis <b>qa-report.md</b>…' },
-  { id:'security-officer', short:'Security', color:'#2c3e50', step:'Test', x:100, y:470, file:'.team/security-report.md',
+  { id:'security-officer', short:'Security', color:'#2c3e50', hair:'#111111', skin:'#f2c89b', step:'Test', x:100, y:470, file:'.team/security-report.md', shortFile:'security-report.md',
     lines:['Security bersih,','no celah'], status:'Security lagi nulis <b>security-report.md</b>…' },
-  { id:'finance-officer', short:'Finance', color:'#27ae60', step:'Ship', x:300, y:470, file:'.team/finance.md',
+  { id:'finance-officer', short:'Finance', color:'#27ae60', hair:'#5b3a1e', skin:'#e8b88a', step:'Ship', x:300, y:470, file:'.team/finance.md', shortFile:'finance.md',
     lines:['Budget aman,','semua tercatat'], status:'Finance lagi nulis <b>finance.md</b>…' },
-  { id:'content-creator', short:'Content', color:'#e91e63', step:'Ship', x:100, y:580, file:'.team/content.md',
+  { id:'content-creator', short:'Content', color:'#e91e63', hair:'#2c2c2c', skin:'#f2c89b', step:'Ship', x:100, y:580, file:'.team/content.md', shortFile:'content.md',
     lines:['Caption siap,','posting gas!'], status:'Content lagi nulis <b>content.md</b>…' },
-  { id:'release-engineer', short:'Release', color:'#00bcd4', step:'Reflect', x:300, y:580, file:'.team/release.md',
+  { id:'release-engineer', short:'Release', color:'#00bcd4', hair:'#3b2f2f', skin:'#d9a06b', step:'Reflect', x:300, y:580, file:'.team/release.md', shortFile:'release.md',
     lines:['Siap deploy,','nunggu izin'], status:'Release lagi nulis <b>release.md</b>…' },
 ];
 const NS = 'http://www.w3.org/2000/svg';
@@ -237,11 +266,12 @@ ROLES.forEach(r => {
     `<rect x="${x}" y="0" width="${w}" height="${h}" rx="12" fill="#fff" stroke="#eadfc9"/>` +
     `<rect x="${x + 8}" y="6" width="46" height="14" rx="7" fill="${r.color}"/>` +
     `<text x="${x + 31}" y="16" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">${r.step.toUpperCase()}</text>` +
-    `<text x="0" y="36" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[0]}</text>` +
-    `<text x="0" y="51" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[1]}</text>` +
+    `<text class="bl1" x="0" y="36" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[0]}</text>` +
+    `<text class="bl2" x="0" y="51" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[1]}</text>` +
     `<polygon points="-7,${h} 7,${h} 0,${h + 9}" fill="#fff" stroke="#eadfc9"/>`;
   wrap.appendChild(g);
   bubblesEl.appendChild(wrap);
+  r.bubbleWrap = wrap; r.bl1 = g.querySelector('.bl1'); r.bl2 = g.querySelector('.bl2');
 });
 const legendEl = document.getElementById('legend');
 ROLES.forEach(r => {
@@ -249,6 +279,121 @@ ROLES.forEach(r => {
   d.innerHTML = `<i style="background:${r.color}"></i><span>${r.short}<small>${r.id} → ${r.file}</small></span>`;
   legendEl.appendChild(d);
 });
+/* ---------- walking: sambil mengerjakan — antar handoff ke spot berikut ---------- */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SPEED = 110; /* units/sec */
+const MAX_WALKERS = 3;
+const SPOTS = {
+  meeting: { x: 200, y: 196, label: 'meja meeting' },
+  lounge: { x: 150, y: 700, label: 'lounge' },
+};
+function deskSpot(t) { /* stand aisle-side of a desk to deliver the handoff */
+  return { x: t.x < 200 ? t.x + 72 : t.x - 72, y: t.y + 22, label: 'meja ' + t.short };
+}
+function route(from, to) { /* via the centre aisle x=200 */
+  const pts = [];
+  if (from.x !== 200) pts.push({ x: 200, y: from.y });
+  if (to.x !== 200) pts.push({ x: 200, y: to.y });
+  pts.push({ x: to.x, y: to.y });
+  return pts.filter((p, i) => i === 0 || p.x !== pts[i - 1].x || p.y !== pts[i - 1].y);
+}
+const walkersEl = document.getElementById('walkers');
+ROLES.forEach(r => {
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'walker');
+  g.setAttribute('id', 'walker-' + r.id);
+  g.setAttribute('style', `--shirt:${r.color};--hair:${r.hair};--skin:${r.skin}`);
+  g.innerHTML = '<g class="wflip"><use href="#walker"/></g>';
+  walkersEl.appendChild(g);
+  r.home = r.id === 'office-hours' ? { x: 200, y: 188 } : { x: r.x, y: r.y + 18 };
+  r.pos = { ...r.home };
+  r.state = 'seated'; r.facing = 1; r.destLabel = '';
+  r.seatFig = document.getElementById('seat-' + r.id);
+  r.walker = g; r.flip = g.querySelector('.wflip');
+  r.path = []; r.seg = 0; r.from = null; r.to = null; r.dist = 0; r.done = 0;
+  r.pauseT = 0; r.idleT = 1 + Math.random() * 6;
+});
+function walkersActive() { return ROLES.filter(r => r.state !== 'seated').length; }
+function setBubbleText(r, l1, l2) { r.bl1.textContent = l1; r.bl2.textContent = l2; }
+function restoreBubbleText(r) { setBubbleText(r, r.lines[0], r.lines[1]); }
+function startTrip(r) {
+  if (REDUCED || r.state !== 'seated' || walkersActive() >= MAX_WALKERS) return false;
+  const roll = Math.random();
+  let dest;
+  if (roll < 0.35) dest = SPOTS.meeting;
+  else if (roll < 0.5) dest = SPOTS.lounge;
+  else { const others = ROLES.filter(o => o.id !== r.id); dest = deskSpot(others[Math.floor(Math.random() * others.length)]); }
+  r.dest = dest; r.destLabel = dest.label;
+  r.outPath = route(r.home, dest);
+  r.backPath = route(dest, r.home);
+  r.path = r.outPath; r.seg = 0;
+  r.state = 'walking'; r.phase = 'out';
+  r.seatFig.style.opacity = 0;
+  r.walker.classList.add('on');
+  beginSeg(r);
+  setBubbleText(r, `Bawa ${r.shortFile}`, `ke ${dest.label}…`);
+  return true;
+}
+function beginSeg(r) {
+  r.from = { ...r.pos };
+  r.to = r.path[r.seg];
+  r.dist = Math.hypot(r.to.x - r.from.x, r.to.y - r.from.y) || 1;
+  r.done = 0;
+  if (r.to.x !== r.from.x) r.facing = r.to.x > r.from.x ? 1 : -1;
+}
+function stepWalk(r, dt) {
+  if (r.state === 'paused') {
+    r.pauseT -= dt;
+    if (r.pauseT <= 0) { r.state = 'returning'; r.path = r.backPath; r.seg = 0; r.walker.classList.remove('still'); beginSeg(r); }
+    return;
+  }
+  if (r.state !== 'walking' && r.state !== 'returning') return;
+  r.done += SPEED * dt;
+  const t = Math.min(1, r.done / r.dist);
+  r.pos.x = r.from.x + (r.to.x - r.from.x) * t;
+  r.pos.y = r.from.y + (r.to.y - r.from.y) * t;
+  if (t >= 1) {
+    r.seg++;
+    if (r.seg >= r.path.length) {
+      if (r.phase === 'out') { r.state = 'paused'; r.pauseT = 1.6; r.walker.classList.add('still'); }
+      else {
+        r.state = 'seated'; r.pos = { ...r.home };
+        r.seatFig.style.opacity = 1;
+        r.walker.classList.remove('on');
+        restoreBubbleText(r);
+        r.idleT = 2 + Math.random() * 4;
+      }
+    } else beginSeg(r);
+  }
+}
+const walkRing = document.getElementById('walkRing');
+const statusTextEl = document.getElementById('statusText');
+let lastStatus = '';
+let lastFrame = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastFrame) / 1000); lastFrame = now;
+  if (!REDUCED) {
+    ROLES.forEach(r => {
+      if (r.state === 'seated') { r.idleT -= dt; if (r.idleT <= 0 && !startTrip(r)) r.idleT = 0.5; }
+      else stepWalk(r, dt);
+      r.bubbleWrap.setAttribute('transform', `translate(${r.pos.x},${r.pos.y - 126})`);
+      r.walker.setAttribute('transform', `translate(${r.pos.x},${r.pos.y})`);
+      r.flip.style.transform = r.facing < 0 ? 'scale(-1,1)' : 'scale(1,1)';
+    });
+    const a = ROLES[idx];
+    if (a.state !== 'seated') {
+      walkRing.setAttribute('cx', a.pos.x); walkRing.setAttribute('cy', a.pos.y + 3);
+      walkRing.style.opacity = 1;
+    } else walkRing.style.opacity = 0;
+    const st = a.state !== 'seated'
+      ? `${a.short} lagi bawa <b>${a.shortFile}</b> ke ${a.destLabel}…`
+      : a.status;
+    if (st !== lastStatus) { statusTextEl.innerHTML = st; lastStatus = st; }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
 const rail = document.getElementById('rail');
 const statusText = document.getElementById('statusText');
 let idx = 0, timer = null;
@@ -259,12 +404,21 @@ function show(n) {
   ROLES.forEach(x => { const ring = document.getElementById('ring-' + x.id); if (ring) ring.style.opacity = x.id === r.id ? 1 : 0; });
   rail.querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.step === r.step));
   statusText.innerHTML = r.status;
+  /* the active role usually walks off carrying their handoff */
+  if (Math.random() < 0.7) startTrip(r);
 }
 function next() { show(idx + 1); }
 function restart() { clearInterval(timer); timer = setInterval(next, 3000); }
 show(0); restart();
 document.querySelectorAll('[data-role]').forEach(g =>
   g.addEventListener('click', () => { show(ROLES.findIndex(r => r.id === g.dataset.role)); restart(); }));
+
+/* debug hook for verification */
+window.__office = {
+  positions: () => ROLES.map(r => ({ id: r.id, x: Math.round(r.pos.x), y: Math.round(r.pos.y), state: r.state, dest: r.destLabel || null })),
+  walkingCount: () => ROLES.filter(r => r.state !== 'seated').length,
+  activeRole: () => ROLES[idx].id,
+};
 </script>
 </body>
 </html>
