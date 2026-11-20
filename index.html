@@ -9,7 +9,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body { background: #0e1116; color: #e8e6df; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  .wrap { max-width: 560px; margin: 0 auto; padding: 12px 12px 28px; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 12px 12px 28px; }
   h1 { font-size: 22px; margin: 6px 0 2px; letter-spacing: 1px; }
   h1 .t3d { color: #4fc3f7; }
   .sub { color: #9aa3ad; font-size: 13px; margin: 0 0 10px; line-height: 1.45; }
@@ -18,7 +18,7 @@
     background: #1c2330; color: #8b94a1; border: 1px solid #2a3342; transition: all .3s; }
   .chip.on { background: #f39c12; color: #1a1206; border-color: #f39c12; }
   #stage { position: relative; border-radius: 16px; overflow: hidden; background: #16202e;
-    height: 520px; border: 1px solid #263142; touch-action: none; }
+    height: min(88vh, 900px); margin: 0 -12px; border: 1px solid #263142; touch-action: none; }
   #stage canvas { display: block; width: 100%; height: 100%; }
   #labels { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
   .ntag { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; font-size: 10px; font-weight: 700;
@@ -121,7 +121,7 @@ stage.appendChild(renderer.domElement);
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0xbcd9ea);
 scene.fog = new THREE.Fog(0xbcd9ea, 34, 62);
-var camera = new THREE.PerspectiveCamera(55, 1, 0.1, 120);
+var camera = new THREE.PerspectiveCamera(65, 1, 0.1, 120);
 
 scene.add(new THREE.HemisphereLight(0xcfe5ff, 0x8a6f4d, 0.85));
 scene.add(new THREE.AmbientLight(0xffffff, 0.25));
@@ -1202,7 +1202,7 @@ function updateStatus() {
 /* ================= CUSTOM ORBIT CONTROLS ================= */
 var ctrl = {
   target: new THREE.Vector3(0, 1.9, -0.5),
-  theta: 0.35, phi: 1.47, radius: 15,
+  theta: 0.35, phi: 1.47, radius: 17,
   vTheta: 0, vPhi: 0, vR: 0, lastInteract: -100
 };
 function applyCamera() {
