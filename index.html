@@ -47,34 +47,55 @@
   footer a { color: #b3541e; font-weight: 700; text-decoration: none; word-break: break-all; }
 
   /* --- SVG animation --- */
-  .bob { animation: bob 2.6s ease-in-out infinite; }
+  .bob { animation: bob var(--bobd, 2.6s) ease-in-out infinite; animation-delay: var(--bobdelay, 0s); }
   @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
   .screen { animation: glow 2.2s ease-in-out infinite; }
   @keyframes glow { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
   .plant { transform-origin: 50% 100%; transform-box: fill-box; animation: sway 4s ease-in-out infinite; }
   @keyframes sway { 0%,100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+  .lampglow { animation: glow 3s ease-in-out infinite; }
+  .steam { animation: steam 2.2s ease-in-out infinite; }
+  @keyframes steam { 0% { opacity: 0; transform: translateY(2px); } 40% { opacity: .7; } 100% { opacity: 0; transform: translateY(-6px); } }
+  .sip { transform-box: fill-box; transform-origin: 50% 100%; animation: sip 7s ease-in-out infinite; }
+  @keyframes sip { 0%,28%,55%,100% { transform: rotate(0deg); } 35%,48% { transform: rotate(-16deg); } }
   .bubble { opacity: 0; transform: translateY(6px) scale(.92); transform-box: fill-box;
     transform-origin: 50% 100%; transition: opacity .35s, transform .35s; pointer-events: none; }
   .bubble.on { opacity: 1; transform: translateY(0) scale(1); }
   .seatFig { transition: opacity .3s; }
+  /* faces: happy variant shows when the figure's group has .happy */
+  .face .h { display: none; }
+  .happy .face .h { display: block; }
+  .happy .face .n { display: none; }
+  /* delivery pop burst */
+  #popFx { opacity: 0; transition: opacity .25s; pointer-events: none; }
+  #popFx.on { opacity: 1; }
+  #popFx .popin { transform-box: fill-box; transform-origin: 50% 50%; }
+  #popFx.on .popin { animation: popfx .55s ease-out; }
+  @keyframes popfx { 0% { transform: scale(.4); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
   /* --- walking character --- */
   .walker { opacity: 0; transition: opacity .3s; pointer-events: none; }
   .walker.on { opacity: 1; }
-  .walker .leg { transform-box: fill-box; transform-origin: 50% 0; animation: swing .45s ease-in-out infinite alternate; }
-  .walker .leg.b { animation-delay: -.225s; }
-  .walker.still .leg, .walker.still .wbob { animation: none; }
+  .wflip { transition: transform .25s ease; }
+  .walker .leg { transform-box: fill-box; transform-origin: 50% 0; animation: swing .9s ease-in-out infinite; }
+  .walker .leg.b { animation-delay: -.45s; }
+  .walker .arm { transform-box: fill-box; transform-origin: 50% 0; animation: aswing .9s ease-in-out infinite; }
+  .walker .arm.a { animation-delay: -.45s; }
+  .walker.still .leg, .walker.still .arm { animation: none; }
   .wbob { animation: wbob .45s ease-in-out infinite; }
-  @keyframes swing { from { transform: rotate(24deg); } to { transform: rotate(-24deg); } }
+  .walker.still .wbob { animation: breathe 2.4s ease-in-out infinite; }
+  @keyframes swing { 0%,100% { transform: rotate(26deg); } 50% { transform: rotate(-26deg); } }
+  @keyframes aswing { 0%,100% { transform: rotate(-18deg); } 50% { transform: rotate(18deg); } }
   @keyframes wbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+  @keyframes breathe { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-1px) scaleY(1.02); } }
   @media (prefers-reduced-motion: reduce) {
-    .bob, .screen, .plant { animation: none; }
+    .bob, .screen, .plant, .lampglow, .steam, .sip, .walker .leg, .walker .arm, .wbob { animation: none; }
   }
 </style>
 </head>
 <body>
 <header>
   <h1>VIRTUAL OFFICE</h1>
-  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Mereka jalan antar meja sambil bawa handoff, live.</p>
+  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Kantor baru, mereka jalan antar meja sambil bawa handoff, live.</p>
 </header>
 <div class="rail" id="rail" aria-label="Tahap sprint">
   <span data-step="Think">THINK</span><span data-step="Plan">PLAN</span><span data-step="Build">BUILD</span><span data-step="Review">REVIEW</span><span data-step="Test">TEST</span><span data-step="Ship">SHIP</span><span data-step="Reflect">REFLECT</span>
@@ -85,6 +106,10 @@
     <clipPath id="floorClip">
       <polygon points="30,60 370,60 392,360 370,700 30,700 8,360"/>
     </clipPath>
+    <clipPath id="wallClip">
+      <polygon points="30,60 200,8 200,58 30,108"/>
+      <polygon points="200,8 370,60 370,108 200,58"/>
+    </clipPath>
     <!-- Desk only (no figure). Seated figure is separate so it can hide while walking. -->
     <g id="deskOnly">
       <polygon points="-58,8 58,8 70,26 -46,26" fill="#c98d4e"/>
@@ -93,9 +118,13 @@
       <rect x="-52" y="-18" width="4" height="24" fill="#6b4a26"/>
       <rect x="-68" y="-40" width="36" height="26" rx="2" fill="#1d2b36"/>
       <rect class="screen" x="-65" y="-37" width="30" height="20" rx="1" fill="#8fd4ff"/>
+      <polygon points="-52,2 -44,2 -45,10 -51,10" fill="#b3541e"/>
+      <ellipse cx="-48" cy="-3" rx="3" ry="6" fill="#2e7d32"/>
+      <ellipse cx="-52" cy="0" rx="2.5" ry="4" fill="#43a047"/>
+      <ellipse cx="-44" cy="0" rx="2.5" ry="4" fill="#388e3c"/>
       <polygon points="-30,14 6,14 12,24 -24,24" fill="#5d4030"/>
     </g>
-    <!-- Seated figure (chair + upper body). Shirt/hair/skin set per <use> via CSS vars. -->
+    <!-- Seated figure (chair + upper body). Shirt/hair/skin set per <use> via CSS vars. Face + accessories are real-DOM overlays added by JS. -->
     <g id="seatFig">
       <rect x="-10" y="-34" width="28" height="34" rx="7" fill="#8a6a42"/>
       <g class="bob">
@@ -104,12 +133,14 @@
         <path d="M -7 -38 a 12 12 0 0 1 24 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="5" stroke-linecap="round"/>
       </g>
     </g>
-    <!-- Walking figure (feet at 0,0): swinging legs, bobbing body, carries a paper (the handoff). -->
+    <!-- Walking figure (feet at 0,0): swinging legs + arms, bobbing body, carries a paper (the handoff). -->
     <g id="walker">
       <ellipse cx="0" cy="2" rx="15" ry="4.5" fill="#000" opacity=".12"/>
       <g class="wbob">
         <rect class="leg a" x="-8" y="-17" width="7" height="18" rx="3" style="fill:var(--pants,#3a3a3a)"/>
         <rect class="leg b" x="1" y="-17" width="7" height="18" rx="3" style="fill:var(--pants,#3a3a3a)"/>
+        <rect class="arm b" x="-18" y="-38" width="6" height="20" rx="3" style="fill:var(--shirt,#888)"/>
+        <rect class="arm a" x="12" y="-38" width="6" height="20" rx="3" style="fill:var(--shirt,#888)"/>
         <rect x="-13" y="-40" width="26" height="26" rx="9" style="fill:var(--shirt,#888)"/>
         <rect x="9" y="-32" width="12" height="15" rx="2" fill="#fff" stroke="#d8cbb2"/>
         <circle cx="0" cy="-50" r="11" style="fill:var(--skin,#f2c89b)"/>
@@ -136,6 +167,50 @@
     </g>
   </defs>
 
+  <!-- City skyline behind the glass back walls -->
+  <g clip-path="url(#wallClip)">
+    <rect x="0" y="0" width="400" height="110" fill="#cfe8f7"/>
+    <circle cx="330" cy="26" r="9" fill="#ffd76a"/>
+    <ellipse cx="90" cy="22" rx="16" ry="6" fill="#fff" opacity=".85"/>
+    <ellipse cx="240" cy="16" rx="20" ry="7" fill="#fff" opacity=".8"/>
+    <g>
+      <rect x="40" y="55" width="26" height="50" fill="#7b9ab5"/>
+      <rect x="70" y="40" width="22" height="65" fill="#8fa8bf"/>
+      <rect x="100" y="60" width="30" height="45" fill="#6f8fb0"/>
+      <rect x="140" y="35" width="24" height="70" fill="#93aec6"/>
+      <rect x="170" y="55" width="28" height="50" fill="#7b9ab5"/>
+      <rect x="210" y="45" width="26" height="60" fill="#8fa8bf"/>
+      <rect x="240" y="60" width="30" height="45" fill="#6f8fb0"/>
+      <rect x="275" y="38" width="24" height="67" fill="#93aec6"/>
+      <rect x="310" y="55" width="28" height="50" fill="#7b9ab5"/>
+      <rect x="345" y="48" width="22" height="57" fill="#8fa8bf"/>
+    </g>
+    <g fill="#ffd76a">
+      <rect x="46" y="62" width="4" height="5"/><rect x="58" y="70" width="4" height="5"/>
+      <rect x="76" y="48" width="4" height="5"/><rect x="88" y="56" width="4" height="5"/>
+      <rect x="106" y="66" width="4" height="5"/><rect x="146" y="44" width="4" height="5"/>
+      <rect x="158" y="52" width="4" height="5"/><rect x="176" y="62" width="4" height="5"/>
+      <rect x="216" y="52" width="4" height="5"/><rect x="228" y="60" width="4" height="5"/>
+      <rect x="246" y="66" width="4" height="5"/><rect x="282" y="46" width="4" height="5"/>
+      <rect x="294" y="54" width="4" height="5"/><rect x="316" y="62" width="4" height="5"/>
+      <rect x="352" y="56" width="4" height="5"/><rect x="364" y="64" width="4" height="5"/>
+    </g>
+  </g>
+  <!-- Glass back walls -->
+  <polygon points="30,60 200,8 200,58 30,108" fill="#bcd9ea" opacity=".32"/>
+  <polygon points="200,8 370,60 370,108 200,58" fill="#a8cfe6" opacity=".32"/>
+  <g stroke="#7fb3d5" stroke-width="1.5" opacity=".7">
+    <line x1="115" y1="34" x2="115" y2="83"/><line x1="285" y1="34" x2="285" y2="83"/>
+  </g>
+  <polygon points="30,60 370,60 370,66 30,66" fill="#8a6a42"/>
+  <!-- Wall clock -->
+  <g transform="translate(200,42)">
+    <circle r="11" fill="#fff" stroke="#8a6a42" stroke-width="2"/>
+    <line x1="0" y1="0" x2="0" y2="-6" stroke="#2b2118" stroke-width="1.6"/>
+    <line x1="0" y1="0" x2="5" y2="0" stroke="#2b2118" stroke-width="1.6"/>
+    <circle r="1.5" fill="#2b2118"/>
+  </g>
+
   <!-- Floor -->
   <polygon points="30,60 370,60 392,360 370,700 30,700 8,360" fill="#eed3a0"/>
   <g clip-path="url(#floorClip)" stroke="#e0bd85" stroke-width="1.5">
@@ -144,13 +219,48 @@
     <line x1="0" y1="460" x2="400" y2="460"/><line x1="0" y1="540" x2="400" y2="540"/>
     <line x1="0" y1="620" x2="400" y2="620"/>
   </g>
-  <!-- Glass back walls -->
-  <polygon points="30,60 200,8 200,58 30,108" fill="#bcd9ea" opacity=".55"/>
-  <polygon points="200,8 370,60 370,108 200,58" fill="#a8cfe6" opacity=".55"/>
-  <g stroke="#7fb3d5" stroke-width="1.5" opacity=".7">
-    <line x1="115" y1="34" x2="115" y2="83"/><line x1="285" y1="34" x2="285" y2="83"/>
+  <!-- Soft shadows + floor mats under the desks -->
+  <g fill="#000" opacity=".05">
+    <ellipse cx="200" cy="142" rx="112" ry="32"/>
+    <ellipse cx="100" cy="306" rx="62" ry="9"/><ellipse cx="300" cy="306" rx="62" ry="9"/>
+    <ellipse cx="100" cy="416" rx="62" ry="9"/><ellipse cx="300" cy="416" rx="62" ry="9"/>
+    <ellipse cx="100" cy="526" rx="62" ry="9"/><ellipse cx="300" cy="526" rx="62" ry="9"/>
+    <ellipse cx="100" cy="636" rx="62" ry="9"/><ellipse cx="300" cy="636" rx="62" ry="9"/>
   </g>
-  <polygon points="30,60 370,60 370,66 30,66" fill="#8a6a42"/>
+  <g fill="#e3c189" opacity=".55">
+    <ellipse cx="200" cy="308" rx="165" ry="13"/>
+    <ellipse cx="200" cy="418" rx="165" ry="13"/>
+    <ellipse cx="200" cy="528" rx="165" ry="13"/>
+    <ellipse cx="200" cy="638" rx="165" ry="13"/>
+  </g>
+  <!-- Hanging pendant lamps (drawn after the floor so they stay visible) -->
+  <g id="lamps">
+    <line x1="120" y1="58" x2="120" y2="104" stroke="#8a6a42" stroke-width="2"/>
+    <polygon points="108,104 132,104 126,120 114,120" fill="#b3541e"/>
+    <circle class="lampglow" cx="120" cy="124" r="7" fill="#ffd76a" opacity=".85"/>
+    <circle class="lampglow" cx="120" cy="124" r="13" fill="#ffd76a" opacity=".18"/>
+    <line x1="280" y1="58" x2="280" y2="104" stroke="#8a6a42" stroke-width="2"/>
+    <polygon points="268,104 292,104 286,120 274,120" fill="#b3541e"/>
+    <circle class="lampglow" cx="280" cy="124" r="7" fill="#ffd76a" opacity=".85"/>
+    <circle class="lampglow" cx="280" cy="124" r="13" fill="#ffd76a" opacity=".18"/>
+  </g>
+  <!-- Standing whiteboards flanking the meeting table -->
+  <g transform="translate(48,150)">
+    <line x1="6" y1="34" x2="0" y2="52" stroke="#8a6a42" stroke-width="2.5"/>
+    <line x1="38" y1="34" x2="44" y2="52" stroke="#8a6a42" stroke-width="2.5"/>
+    <rect x="0" y="0" width="44" height="36" rx="3" fill="#fff" stroke="#8a6a42" stroke-width="1.5"/>
+    <polygon points="12,26 22,10 32,26" fill="#e74c3c"/>
+    <text x="22" y="33" font-size="7.5" font-weight="700" text-anchor="middle" fill="#2b2118">SHIP IT</text>
+  </g>
+  <g transform="translate(352,150)">
+    <line x1="-38" y1="34" x2="-44" y2="52" stroke="#8a6a42" stroke-width="2.5"/>
+    <line x1="-6" y1="34" x2="0" y2="52" stroke="#8a6a42" stroke-width="2.5"/>
+    <rect x="-44" y="0" width="44" height="36" rx="3" fill="#fff" stroke="#8a6a42" stroke-width="1.5"/>
+    <rect x="-32" y="14" width="6" height="12" fill="#3498db"/>
+    <rect x="-22" y="10" width="6" height="16" fill="#27ae60"/>
+    <rect x="-12" y="16" width="6" height="10" fill="#f39c12"/>
+    <text x="-22" y="33" font-size="7.5" font-weight="700" text-anchor="middle" fill="#2b2118">1 SPRINT</text>
+  </g>
 
   <!-- Meeting table + CEO -->
   <g data-role="office-hours">
@@ -158,11 +268,7 @@
     <ellipse cx="200" cy="134" rx="102" ry="30" fill="#c98d4e"/>
     <ellipse cx="200" cy="134" rx="86" ry="22" fill="#dbab72"/>
     <rect x="168" y="120" width="64" height="10" rx="2" fill="#5d4030"/>
-    <g class="seatFig" id="seat-office-hours"><g class="bob">
-      <rect x="186" y="150" width="28" height="34" rx="10" style="fill:#e74c3c"/>
-      <circle cx="200" cy="140" r="12" fill="#f2c89b"/>
-      <path d="M 188 140 a 12 12 0 0 1 24 0" fill="none" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round"/>
-    </g></g>
+    <g class="seatFig" id="seat-office-hours" transform="translate(195,178)"><use href="#seatFig" style="--shirt:#e74c3c;--hair:#2c2c2c;--skin:#f2c89b"/></g>
     <rect x="150" y="120" width="16" height="11" rx="1" fill="#1d2b36"/>
     <rect class="screen" x="152" y="122" width="12" height="7" fill="#8fd4ff"/>
     <g font-size="11" font-weight="700" text-anchor="middle" fill="#2b2118">
@@ -206,18 +312,54 @@
     <g transform="translate(300,580)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Release</text></g>
   </g>
 
-  <!-- Lounge -->
+  <!-- Lounge: rug, sofa, two friends chatting, coffee table -->
+  <ellipse cx="150" cy="720" rx="120" ry="20" fill="#c96f4a" opacity=".75"/>
+  <ellipse cx="150" cy="720" rx="92" ry="14" fill="none" stroke="#e8b64c" stroke-width="2" opacity=".7"/>
   <g transform="translate(105,712)"><use href="#sofa"/></g>
+  <g transform="translate(78,706) scale(.85)"><g class="seatFig" id="seat-lounge-a"><use href="#seatFig" style="--shirt:#e67e22;--hair:#2c2c2c;--skin:#e8b88a"/></g></g>
+  <g transform="translate(132,706) scale(.85)"><g class="seatFig" id="seat-lounge-b"><use href="#seatFig" style="--shirt:#16a085;--hair:#111111;--skin:#f2c89b"/></g></g>
   <ellipse cx="225" cy="716" rx="34" ry="10" fill="#8a5a2e"/>
   <ellipse cx="225" cy="712" rx="34" ry="10" fill="#c98d4e"/>
-  <g transform="translate(330,712)"><use href="#plant"/></g>
+  <rect x="216" y="700" width="8" height="10" rx="2" fill="#fff" stroke="#d8cbb2"/>
+  <rect x="230" y="702" width="8" height="8" rx="2" fill="#e8b64c"/>
+  <g id="loungeBubble" opacity="0" transform="translate(105,612)">
+    <rect x="-75" y="0" width="150" height="38" rx="12" fill="#fff" stroke="#eadfc9"/>
+    <text id="loungeText" x="0" y="24" font-size="12.5" text-anchor="middle" fill="#2b2118">☕ ngopi dulu…</text>
+    <polygon points="-7,38 7,38 0,47" fill="#fff" stroke="#eadfc9"/>
+  </g>
+
+  <!-- Coffee corner -->
+  <g id="coffee">
+    <rect x="300" y="652" width="84" height="26" rx="4" fill="#8a5a2e"/>
+    <rect x="300" y="648" width="84" height="8" rx="4" fill="#c98d4e"/>
+    <rect x="312" y="626" width="24" height="22" rx="3" fill="#1d2b36"/>
+    <rect x="316" y="630" width="16" height="8" fill="#8fd4ff"/>
+    <rect x="318" y="640" width="6" height="6" fill="#fff"/>
+    <path class="steam" d="M 322 624 q 2 -5 0 -9" stroke="#fff" fill="none" stroke-width="1.5" opacity=".6"/>
+    <path class="steam" d="M 328 624 q -2 -5 0 -9" stroke="#fff" fill="none" stroke-width="1.5" opacity=".6" style="animation-delay:.7s"/>
+    <rect x="346" y="638" width="8" height="10" rx="2" fill="#fff" stroke="#d8cbb2"/>
+    <rect x="358" y="640" width="8" height="8" rx="2" fill="#e8b64c"/>
+    <rect x="370" y="636" width="7" height="12" rx="2" fill="#fff" stroke="#d8cbb2"/>
+  </g>
+
+  <!-- Plants -->
   <g transform="translate(60,690)"><use href="#plant"/></g>
   <g transform="translate(368,300)"><use href="#plant"/></g>
   <g transform="translate(32,300)"><use href="#plant"/></g>
+  <g transform="translate(32,420)"><use href="#plant"/></g>
+  <g transform="translate(368,420)"><use href="#plant"/></g>
 
   <!-- Walking characters (JS-driven, sambil bawa handoff) -->
   <g id="walkers"></g>
   <ellipse id="walkRing" cx="0" cy="0" rx="24" ry="7" fill="none" stroke="#b3541e" stroke-width="2" stroke-dasharray="5 4" opacity="0"/>
+
+  <!-- Delivery pop burst (JS positions it, toggles .on) -->
+  <g id="popFx" opacity="0">
+    <g class="popin">
+      <polygon points="0,-16 4,-5 16,-5 6,2 10,13 0,6 -10,13 -6,2 -16,-5 -4,-5" fill="#f7c948" stroke="#e0a92e" stroke-width="1"/>
+      <path d="M -5,0 L -1.5,3.5 L 5.5,-3.5" fill="none" stroke="#2b7a3d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
 
   <!-- Chat bubbles (JS fills text, toggles .on) -->
   <g id="bubbles"></g>
@@ -235,25 +377,85 @@
 <script>
 const ROLES = [
   { id:'office-hours', short:'CEO', color:'#e74c3c', hair:'#2c2c2c', skin:'#f2c89b', step:'Think', x:200, y:150, file:'.team/brief.md', shortFile:'brief.md',
-    lines:['Brief udah siap,','lanjut ke planner'], status:'CEO lagi nulis <b>brief.md</b>…' },
+    lines:['Brief udah siap,','lanjut ke planner'], status:'CEO lagi nulis <b>brief.md</b>…', bobd:2.2, bobdelay:0 },
   { id:'planner', short:'Planner', color:'#3498db', hair:'#3b2f2f', skin:'#f2c89b', step:'Plan', x:100, y:250, file:'.team/design.md', shortFile:'design.md',
-    lines:['Desain selesai,','builder gas!'], status:'Planner lagi nulis <b>design.md</b>…' },
+    lines:['Desain selesai,','builder gas!'], status:'Planner lagi nulis <b>design.md</b>…', bobd:2.6, bobdelay:.3 },
   { id:'builder', short:'Builder', color:'#f39c12', hair:'#1f1f1f', skin:'#e8b88a', step:'Build', x:300, y:250, file:'.team/build-log.md', shortFile:'build-log.md',
-    lines:['Build kelar,','cek review ya'], status:'Builder lagi nulis <b>build-log.md</b>…' },
+    lines:['Build kelar,','cek review ya'], status:'Builder lagi nulis <b>build-log.md</b>…', bobd:3.0, bobdelay:.6 },
   { id:'reviewer', short:'Reviewer', color:'#9b59b6', hair:'#4a2c14', skin:'#f2c89b', step:'Review', x:100, y:360, file:'.team/review.md', shortFile:'review.md',
-    lines:['Review oke,','lanjut QA'], status:'Reviewer lagi nulis <b>review.md</b>…' },
+    lines:['Review oke,','lanjut QA'], status:'Reviewer lagi nulis <b>review.md</b>…', bobd:2.4, bobdelay:.15 },
   { id:'qa', short:'QA', color:'#1abc9c', hair:'#2c2c2c', skin:'#d9a06b', step:'Test', x:300, y:360, file:'.team/qa-report.md', shortFile:'qa-report.md',
-    lines:['QA lolos,','semua aman'], status:'QA lagi nulis <b>qa-report.md</b>…' },
+    lines:['QA lolos,','semua aman'], status:'QA lagi nulis <b>qa-report.md</b>…', bobd:2.8, bobdelay:.45 },
   { id:'security-officer', short:'Security', color:'#2c3e50', hair:'#111111', skin:'#f2c89b', step:'Test', x:100, y:470, file:'.team/security-report.md', shortFile:'security-report.md',
-    lines:['Security bersih,','no celah'], status:'Security lagi nulis <b>security-report.md</b>…' },
+    lines:['Security bersih,','no celah'], status:'Security lagi nulis <b>security-report.md</b>…', bobd:2.5, bobdelay:.75 },
   { id:'finance-officer', short:'Finance', color:'#27ae60', hair:'#5b3a1e', skin:'#e8b88a', step:'Ship', x:300, y:470, file:'.team/finance.md', shortFile:'finance.md',
-    lines:['Budget aman,','semua tercatat'], status:'Finance lagi nulis <b>finance.md</b>…' },
+    lines:['Budget aman,','semua tercatat'], status:'Finance lagi nulis <b>finance.md</b>…', bobd:2.9, bobdelay:.2 },
   { id:'content-creator', short:'Content', color:'#e91e63', hair:'#2c2c2c', skin:'#f2c89b', step:'Ship', x:100, y:580, file:'.team/content.md', shortFile:'content.md',
-    lines:['Caption siap,','posting gas!'], status:'Content lagi nulis <b>content.md</b>…' },
+    lines:['Caption siap,','posting gas!'], status:'Content lagi nulis <b>content.md</b>…', bobd:2.3, bobdelay:.5 },
   { id:'release-engineer', short:'Release', color:'#00bcd4', hair:'#3b2f2f', skin:'#d9a06b', step:'Reflect', x:300, y:580, file:'.team/release.md', shortFile:'release.md',
-    lines:['Siap deploy,','nunggu izin'], status:'Release lagi nulis <b>release.md</b>…' },
+    lines:['Siap deploy,','nunggu izin'], status:'Release lagi nulis <b>release.md</b>…', bobd:2.7, bobdelay:.9 },
 ];
 const NS = 'http://www.w3.org/2000/svg';
+
+/* ---- faces + per-role accessories (real-DOM overlays so expressions can change) ---- */
+const FACE_SEAT = `<g class="face">
+  <circle class="n" cx="0" cy="-40" r="1.7" fill="#2b2118"/><circle class="n" cx="10" cy="-40" r="1.7" fill="#2b2118"/>
+  <path class="h" d="M -2.5 -40 Q 0 -43.5 2.5 -40" fill="none" stroke="#2b2118" stroke-width="1.8" stroke-linecap="round"/>
+  <path class="h" d="M 7.5 -40 Q 10 -43.5 12.5 -40" fill="none" stroke="#2b2118" stroke-width="1.8" stroke-linecap="round"/>
+  <path class="n" d="M 1 -32 Q 5 -29 9 -32" fill="none" stroke="#2b2118" stroke-width="1.6" stroke-linecap="round"/>
+  <path class="h" d="M 0 -33 Q 5 -27 10 -33 Q 5 -30 0 -33 Z" fill="#7a3b2e"/>
+  <circle cx="-2" cy="-34" r="2" fill="#f5a3a3" opacity=".5"/><circle cx="12" cy="-34" r="2" fill="#f5a3a3" opacity=".5"/>
+</g>`;
+const FACE_WALK = `<g class="face">
+  <circle class="n" cx="-4" cy="-52" r="1.6" fill="#2b2118"/><circle class="n" cx="4" cy="-52" r="1.6" fill="#2b2118"/>
+  <path class="h" d="M -6.5 -52 Q -4 -55.5 -1.5 -52" fill="none" stroke="#2b2118" stroke-width="1.7" stroke-linecap="round"/>
+  <path class="h" d="M 1.5 -52 Q 4 -55.5 6.5 -52" fill="none" stroke="#2b2118" stroke-width="1.7" stroke-linecap="round"/>
+  <path class="n" d="M -3 -45 Q 0 -42.5 3 -45" fill="none" stroke="#2b2118" stroke-width="1.5" stroke-linecap="round"/>
+  <path class="h" d="M -4 -46 Q 0 -40 4 -46 Q 0 -43.5 -4 -46 Z" fill="#7a3b2e"/>
+  <circle cx="-7" cy="-46" r="1.8" fill="#f5a3a3" opacity=".5"/><circle cx="7" cy="-46" r="1.8" fill="#f5a3a3" opacity=".5"/>
+</g>`;
+/* seat frame: head (5,-38) r12, body x -12..22 y -26..16. walk frame: head (0,-50) r11, body x -13..13 y -40..-14. */
+const ACC = {
+  'office-hours': {
+    seat: `<polygon points="0,-26 5,-22 10,-26 8,-28 2,-28" fill="#fff"/><polygon points="2,-24 8,-24 7,-8 5,-3 3,-8" fill="#1f3a5f"/>`,
+    walk: `<polygon points="-3,-38 3,-38 2,-20 0,-16 -2,-20" fill="#1f3a5f"/>` },
+  'planner': {
+    seat: `<path d="M 2 -49 L 5 -56 L 8 -49 Z" fill="#3b2f2f"/><g transform="rotate(12 20 -14)"><rect x="17" y="-22" width="7" height="17" rx="3.5" fill="#fff" stroke="#7fb3d5"/><line x1="19" y1="-17" x2="22" y2="-17" stroke="#7fb3d5"/><line x1="19" y1="-13" x2="22" y2="-13" stroke="#7fb3d5"/></g>`,
+    walk: `<path d="M -3 -60 L 0 -66 L 3 -60 Z" fill="#3b2f2f"/><g transform="rotate(10 12 -28)"><rect x="9" y="-36" width="7" height="16" rx="3.5" fill="#fff" stroke="#7fb3d5"/></g>` },
+  'builder': {
+    seat: `<path d="M -8 -40 a 13 13 0 0 1 26 0 l 0 1 -26 0 Z" fill="#f7c948"/><rect x="-10" y="-41" width="30" height="4" rx="2" fill="#e0a92e"/>`,
+    walk: `<path d="M -11 -50 a 11 11 0 0 1 22 0 l 0 1 -22 0 Z" fill="#f7c948"/><rect x="-13" y="-51" width="26" height="4" rx="2" fill="#e0a92e"/>` },
+  'reviewer': {
+    seat: `<circle cx="0" cy="-40" r="4.6" fill="none" stroke="#2b2118" stroke-width="1.6"/><circle cx="10" cy="-40" r="4.6" fill="none" stroke="#2b2118" stroke-width="1.6"/>`,
+    walk: `<circle cx="-4" cy="-52" r="4.2" fill="none" stroke="#2b2118" stroke-width="1.5"/><circle cx="4" cy="-52" r="4.2" fill="none" stroke="#2b2118" stroke-width="1.5"/>` },
+  'qa': {
+    seat: `<path d="M -7 -42 a 12 12 0 0 1 24 0" fill="none" stroke="#2b2118" stroke-width="3"/><rect x="-10" y="-44" width="5" height="9" rx="2" fill="#2b2118"/><rect x="15" y="-44" width="5" height="9" rx="2" fill="#2b2118"/><path d="M 17 -36 Q 18 -30 10 -29" fill="none" stroke="#2b2118" stroke-width="1.6"/><g class="sip"><rect x="14" y="-14" width="9" height="11" rx="2" fill="#fff" stroke="#d8cbb2"/><rect x="23" y="-11" width="4" height="5" rx="2" fill="none" stroke="#d8cbb2"/><rect x="15.5" y="-16" width="6" height="3" fill="#6f4e37"/></g>`,
+    walk: `<path d="M -10 -54 a 11 11 0 0 1 20 0" fill="none" stroke="#2b2118" stroke-width="2.8"/><rect x="-13" y="-56" width="5" height="9" rx="2" fill="#2b2118"/><rect x="8" y="-56" width="5" height="9" rx="2" fill="#2b2118"/><path d="M 10 -46 Q 11 -41 4 -40" fill="none" stroke="#2b2118" stroke-width="1.5"/>` },
+  'security-officer': {
+    seat: `<rect x="-6" y="-52" width="22" height="6" rx="2" fill="#111"/><path d="M 5 -20 L 11 -18 L 11 -12 Q 11 -7 5 -5 Q -1 -7 -1 -12 L -1 -18 Z" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>`,
+    walk: `<rect x="-9" y="-62" width="18" height="5" rx="2" fill="#111"/><path d="M 0 -32 L 6 -30 L 6 -24 Q 6 -19 0 -17 Q -6 -19 -6 -24 L -6 -30 Z" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>` },
+  'finance-officer': {
+    seat: `<polygon points="2,-24 8,-24 7,-8 5,-3 3,-8" fill="#145a32"/><g transform="rotate(-10 18 -12)"><rect x="13" y="-20" width="12" height="16" rx="2" fill="#34495e"/><rect x="15" y="-18" width="8" height="4" fill="#8fd4ff"/><circle cx="17" cy="-10" r="1.2" fill="#fff"/><circle cx="21" cy="-10" r="1.2" fill="#fff"/><circle cx="17" cy="-6" r="1.2" fill="#fff"/><circle cx="21" cy="-6" r="1.2" fill="#fff"/></g>`,
+    walk: `<polygon points="-3,-38 3,-38 2,-20 0,-16 -2,-20" fill="#145a32"/><circle cx="-8" cy="-24" r="3.6" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>` },
+  'content-creator': {
+    seat: `<path d="M -7 -44 Q -10 -28 -6 -20 L -3 -20 Q -6 -30 -4 -42 Z" fill="#2c2c2c"/><path d="M 17 -44 Q 20 -28 16 -20 L 13 -20 Q 16 -30 14 -42 Z" fill="#2c2c2c"/><g transform="rotate(-18 20 -24)"><polygon points="14,-28 26,-34 26,-18 14,-22" fill="#e91e63"/><rect x="11" y="-26" width="5" height="8" rx="2" fill="#8a1042"/></g>`,
+    walk: `<path d="M -11 -54 Q -14 -40 -10 -33 L -7 -33 Q -10 -42 -8 -52 Z" fill="#2c2c2c"/><path d="M 11 -54 Q 14 -40 10 -33 L 7 -33 Q 10 -42 8 -52 Z" fill="#2c2c2c"/><g transform="rotate(18 -20 -28)"><polygon points="-14,-30 -26,-36 -26,-20 -14,-24" fill="#e91e63"/><rect x="-16" y="-28" width="5" height="8" rx="2" fill="#8a1042"/></g>` },
+  'release-engineer': {
+    seat: `<path d="M -7 -42 a 12 12 0 0 1 24 0 l 0 -1 -24 0 Z" fill="#008ba3"/><rect x="12" y="-44" width="11" height="4" rx="2" fill="#008ba3"/><g transform="translate(5,-12)"><ellipse cx="0" cy="0" rx="3.5" ry="5" fill="#fff" stroke="#b3541e"/><polygon points="-3,2 -6,7 -2,5" fill="#e74c3c"/><polygon points="3,2 6,7 2,5" fill="#e74c3c"/><circle cx="0" cy="-1" r="1.4" fill="#8fd4ff"/></g>`,
+    walk: `<path d="M -11 -52 a 11 11 0 0 1 22 0 l 0 -1 -22 0 Z" fill="#008ba3"/><rect x="8" y="-54" width="10" height="4" rx="2" fill="#008ba3"/><g transform="translate(0,-26)"><ellipse cx="0" cy="0" rx="3.5" ry="5" fill="#fff" stroke="#b3541e"/><polygon points="-3,2 -6,7 -2,5" fill="#e74c3c"/><polygon points="3,2 6,7 2,5" fill="#e74c3c"/><circle cx="0" cy="-1" r="1.4" fill="#8fd4ff"/></g>` },
+};
+function attachOverlay(host, kind, roleId) {
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'acc ' + (kind === 'seat' ? 'bob' : 'wbob'));
+  g.innerHTML = (kind === 'seat' ? FACE_SEAT : FACE_WALK) + (ACC[roleId] ? ACC[roleId][kind] : '');
+  host.appendChild(g);
+}
+function setHappy(r, on) {
+  if (!r.seatFig || !r.walker) return;
+  r.seatFig.classList.toggle('happy', on);
+  r.walker.classList.toggle('happy', on);
+}
+
 const bubblesEl = document.getElementById('bubbles');
 ROLES.forEach(r => {
   const wrap = document.createElementNS(NS, 'g');
@@ -281,7 +483,7 @@ ROLES.forEach(r => {
 });
 /* ---------- walking: sambil mengerjakan — antar handoff ke spot berikut ---------- */
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const SPEED = 110; /* units/sec */
+const SPEED = 85; /* units/sec — slower so feet don't slide */
 const MAX_WALKERS = 3;
 const SPOTS = {
   meeting: { x: 200, y: 196, label: 'meja meeting' },
@@ -309,13 +511,36 @@ ROLES.forEach(r => {
   r.pos = { ...r.home };
   r.state = 'seated'; r.facing = 1; r.destLabel = '';
   r.seatFig = document.getElementById('seat-' + r.id);
+  r.seatFig.style.setProperty('--bobd', r.bobd + 's');
+  r.seatFig.style.setProperty('--bobdelay', r.bobdelay + 's');
+  attachOverlay(r.seatFig, 'seat', r.id);
   r.walker = g; r.flip = g.querySelector('.wflip');
+  attachOverlay(r.flip, 'walk', r.id);
   r.path = []; r.seg = 0; r.from = null; r.to = null; r.dist = 0; r.done = 0;
-  r.pauseT = 0; r.idleT = 1 + Math.random() * 6;
+  r.pauseT = 0; r.riseT = 0; r.settleT = 0; r.idleT = 1 + Math.random() * 6;
+});
+/* lounge friends get faces too */
+['seat-lounge-a', 'seat-lounge-b'].forEach((id, i) => {
+  const host = document.getElementById(id);
+  host.style.setProperty('--bobd', (2.4 + i * 0.5) + 's');
+  host.style.setProperty('--bobdelay', (i * 0.8) + 's');
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'acc bob');
+  g.innerHTML = FACE_SEAT;
+  host.appendChild(g);
+  if (i === 0) host.classList.add('happy');
 });
 function walkersActive() { return ROLES.filter(r => r.state !== 'seated').length; }
 function setBubbleText(r, l1, l2) { r.bl1.textContent = l1; r.bl2.textContent = l2; }
 function restoreBubbleText(r) { setBubbleText(r, r.lines[0], r.lines[1]); }
+const popFx = document.getElementById('popFx');
+function showPop(x, y) {
+  popFx.setAttribute('transform', `translate(${x},${y - 88})`);
+  popFx.classList.remove('on');
+  void popFx.getBBox();
+  requestAnimationFrame(() => popFx.classList.add('on'));
+}
+function hidePop() { popFx.classList.remove('on'); }
 function startTrip(r) {
   if (REDUCED || r.state !== 'seated' || walkersActive() >= MAX_WALKERS) return false;
   const roll = Math.random();
@@ -327,10 +552,9 @@ function startTrip(r) {
   r.outPath = route(r.home, dest);
   r.backPath = route(dest, r.home);
   r.path = r.outPath; r.seg = 0;
-  r.state = 'walking'; r.phase = 'out';
+  r.state = 'rising'; r.riseT = 0.28; r.phase = 'out';
   r.seatFig.style.opacity = 0;
   r.walker.classList.add('on');
-  beginSeg(r);
   setBubbleText(r, `Bawa ${r.shortFile}`, `ke ${dest.label}…`);
   return true;
 }
@@ -342,26 +566,43 @@ function beginSeg(r) {
   if (r.to.x !== r.from.x) r.facing = r.to.x > r.from.x ? 1 : -1;
 }
 function stepWalk(r, dt) {
+  if (r.state === 'rising') {
+    r.riseT -= dt;
+    if (r.riseT <= 0) { r.state = 'walking'; beginSeg(r); }
+    return;
+  }
+  if (r.state === 'settling') {
+    r.settleT -= dt;
+    if (r.settleT <= 0) {
+      r.state = 'seated'; r.pos = { ...r.home };
+      restoreBubbleText(r);
+      setHappy(r, r === ROLES[idx]);
+      r.idleT = 2 + Math.random() * 4;
+    }
+    return;
+  }
   if (r.state === 'paused') {
     r.pauseT -= dt;
-    if (r.pauseT <= 0) { r.state = 'returning'; r.path = r.backPath; r.seg = 0; r.walker.classList.remove('still'); beginSeg(r); }
+    if (r.pauseT <= 0) { hidePop(); r.state = 'returning'; r.path = r.backPath; r.seg = 0; r.walker.classList.remove('still'); beginSeg(r); }
     return;
   }
   if (r.state !== 'walking' && r.state !== 'returning') return;
   r.done += SPEED * dt;
-  const t = Math.min(1, r.done / r.dist);
+  const tRaw = Math.min(1, r.done / r.dist);
+  const t = tRaw * tRaw * (3 - 2 * tRaw); /* smoothstep: ease in + out */
   r.pos.x = r.from.x + (r.to.x - r.from.x) * t;
   r.pos.y = r.from.y + (r.to.y - r.from.y) * t;
-  if (t >= 1) {
+  if (tRaw >= 1) {
     r.seg++;
     if (r.seg >= r.path.length) {
-      if (r.phase === 'out') { r.state = 'paused'; r.pauseT = 1.6; r.walker.classList.add('still'); }
-      else {
-        r.state = 'seated'; r.pos = { ...r.home };
-        r.seatFig.style.opacity = 1;
+      if (r.phase === 'out') {
+        r.state = 'paused'; r.pauseT = 1.6; r.walker.classList.add('still');
+        showPop(r.pos.x, r.pos.y);
+        setHappy(r, true);
+      } else {
+        r.state = 'settling'; r.settleT = 0.3;
         r.walker.classList.remove('on');
-        restoreBubbleText(r);
-        r.idleT = 2 + Math.random() * 4;
+        r.seatFig.style.opacity = 1;
       }
     } else beginSeg(r);
   }
@@ -381,7 +622,7 @@ function frame(now) {
       r.flip.style.transform = r.facing < 0 ? 'scale(-1,1)' : 'scale(1,1)';
     });
     const a = ROLES[idx];
-    if (a.state !== 'seated') {
+    if (a.state === 'walking' || a.state === 'returning') {
       walkRing.setAttribute('cx', a.pos.x); walkRing.setAttribute('cy', a.pos.y + 3);
       walkRing.style.opacity = 1;
     } else walkRing.style.opacity = 0;
@@ -394,6 +635,19 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 
+/* lounge friends chat, on their own slow timer */
+const loungeBubble = document.getElementById('loungeBubble');
+const loungeText = document.getElementById('loungeText');
+const LOUNGE_LINES = ['☕ ngopi dulu…', 'deploy aman kok', 'sprint ini lancar!', 'habis ini makan siang'];
+let loungeI = 0;
+if (!REDUCED) {
+  setInterval(() => {
+    loungeText.textContent = LOUNGE_LINES[loungeI % LOUNGE_LINES.length]; loungeI++;
+    loungeBubble.style.opacity = 1;
+    setTimeout(() => { loungeBubble.style.opacity = 0; }, 2600);
+  }, 6000);
+}
+
 const rail = document.getElementById('rail');
 const statusText = document.getElementById('statusText');
 let idx = 0, timer = null;
@@ -401,7 +655,10 @@ function show(n) {
   idx = (n + ROLES.length) % ROLES.length;
   const r = ROLES[idx];
   document.querySelectorAll('.bubble').forEach(b => b.classList.toggle('on', b.dataset.bubble === r.id));
-  ROLES.forEach(x => { const ring = document.getElementById('ring-' + x.id); if (ring) ring.style.opacity = x.id === r.id ? 1 : 0; });
+  ROLES.forEach(x => {
+    const ring = document.getElementById('ring-' + x.id); if (ring) ring.style.opacity = x.id === r.id ? 1 : 0;
+    setHappy(x, x.id === r.id);
+  });
   rail.querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.step === r.step));
   statusText.innerHTML = r.status;
   /* the active role usually walks off carrying their handoff */
@@ -418,6 +675,9 @@ window.__office = {
   positions: () => ROLES.map(r => ({ id: r.id, x: Math.round(r.pos.x), y: Math.round(r.pos.y), state: r.state, dest: r.destLabel || null })),
   walkingCount: () => ROLES.filter(r => r.state !== 'seated').length,
   activeRole: () => ROLES[idx].id,
+  overlayCount: () => document.querySelectorAll('.acc').length,
+  faceCount: () => document.querySelectorAll('.face').length,
+  happyCount: () => document.querySelectorAll('.happy').length,
 };
 </script>
 </body>
