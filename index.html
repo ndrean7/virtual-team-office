@@ -46,11 +46,16 @@
   footer { text-align: center; padding: 16px; font-size: 12px; color: #7a6a58; }
   footer a { color: #b3541e; font-weight: 700; text-decoration: none; word-break: break-all; }
 
-  /* --- SVG animation --- */
+  /* --- chibi figure motion --- */
   .bob { animation: bob var(--bobd, 2.6s) ease-in-out infinite; animation-delay: var(--bobdelay, 0s); }
-  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+  .typing .fa-l, .typing .fa-r { animation: type .5s ease-in-out infinite alternate; }
+  .typing .fa-r { animation-delay: .25s; }
+  @keyframes type { from { transform: rotate(0deg); } to { transform: rotate(-9deg); } }
   .screen { animation: glow 2.2s ease-in-out infinite; }
   @keyframes glow { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
+  .codeline { animation: flick 1.6s steps(2, end) infinite; }
+  @keyframes flick { 0%,100% { opacity: .95; } 50% { opacity: .35; } }
   .plant { transform-origin: 50% 100%; transform-box: fill-box; animation: sway 4s ease-in-out infinite; }
   @keyframes sway { 0%,100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
   .lampglow { animation: glow 3s ease-in-out infinite; }
@@ -58,6 +63,8 @@
   @keyframes steam { 0% { opacity: 0; transform: translateY(2px); } 40% { opacity: .7; } 100% { opacity: 0; transform: translateY(-6px); } }
   .sip { transform-box: fill-box; transform-origin: 50% 100%; animation: sip 7s ease-in-out infinite; }
   @keyframes sip { 0%,28%,55%,100% { transform: rotate(0deg); } 35%,48% { transform: rotate(-16deg); } }
+  .dusk { animation: dusk 90s ease-in-out infinite alternate; }
+  @keyframes dusk { from { opacity: 0; } to { opacity: .07; } }
   .bubble { opacity: 0; transform: translateY(6px) scale(.92); transform-box: fill-box;
     transform-origin: 50% 100%; transition: opacity .35s, transform .35s; pointer-events: none; }
   .bubble.on { opacity: 1; transform: translateY(0) scale(1); }
@@ -66,36 +73,58 @@
   .face .h { display: none; }
   .happy .face .h { display: block; }
   .happy .face .n { display: none; }
+  /* stretch: both arms go up */
+  .stretch .armL, .stretch .armR { transform: rotate(-150deg) !important; }
+  .stretch .armL .fa-l, .stretch .armR .fa-r { animation: none; }
+  /* cheer: arms up + bounce */
+  .cheer .armL, .cheer .armR { transform: rotate(-155deg) !important; }
+  .cheer .figbody { animation: cheerbob .5s ease-in-out infinite; }
+  @keyframes cheerbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
   /* delivery pop burst */
   #popFx { opacity: 0; transition: opacity .25s; pointer-events: none; }
   #popFx.on { opacity: 1; }
   #popFx .popin { transform-box: fill-box; transform-origin: 50% 50%; }
   #popFx.on .popin { animation: popfx .55s ease-out; }
   @keyframes popfx { 0% { transform: scale(.4); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
-  /* --- walking character --- */
+  /* confetti */
+  .confetti rect { animation: confettiFall linear forwards; }
+  @keyframes confettiFall {
+    0% { transform: translateY(-12px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(560px) rotate(540deg); opacity: .85; }
+  }
+  /* --- walking chibi --- */
   .walker { opacity: 0; transition: opacity .3s; pointer-events: none; }
   .walker.on { opacity: 1; }
   .wflip { transition: transform .25s ease; }
-  .walker .leg { transform-box: fill-box; transform-origin: 50% 0; animation: swing .9s ease-in-out infinite; }
-  .walker .leg.b { animation-delay: -.45s; }
-  .walker .arm { transform-box: fill-box; transform-origin: 50% 0; animation: aswing .9s ease-in-out infinite; }
-  .walker .arm.a { animation-delay: -.45s; }
-  .walker.still .leg, .walker.still .arm { animation: none; }
+  .walker .thigh { transform-box: fill-box; transform-origin: 50% 0; animation: thighSwing .9s ease-in-out infinite; }
+  .walker .thigh.b { animation-delay: -.45s; }
+  .walker .shin { transform-box: fill-box; transform-origin: 50% 0; animation: shinSwing .9s ease-in-out infinite; }
+  .walker .shin.b { animation-delay: -.45s; }
+  .walker .armW { transform-box: fill-box; transform-origin: 50% 0; animation: armSwing .9s ease-in-out infinite; }
+  .walker .armW.b { animation-delay: -.45s; }
+  .walker.still .thigh, .walker.still .shin, .walker.still .armW { animation: none; }
   .wbob { animation: wbob .45s ease-in-out infinite; }
   .walker.still .wbob { animation: breathe 2.4s ease-in-out infinite; }
-  @keyframes swing { 0%,100% { transform: rotate(26deg); } 50% { transform: rotate(-26deg); } }
-  @keyframes aswing { 0%,100% { transform: rotate(-18deg); } 50% { transform: rotate(18deg); } }
+  @keyframes thighSwing { 0%,100% { transform: rotate(24deg); } 50% { transform: rotate(-24deg); } }
+  @keyframes shinSwing { 0%,100% { transform: rotate(-34deg); } 35% { transform: rotate(6deg); } 50% { transform: rotate(30deg); } }
+  @keyframes armSwing { 0%,100% { transform: rotate(-16deg); } 50% { transform: rotate(16deg); } }
   @keyframes wbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
   @keyframes breathe { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-1px) scaleY(1.02); } }
+  /* sipping / watering props shown only in that state */
+  .prop-sip, .prop-water { display: none; }
+  .walker.sipping .prop-sip, .walker.watering .prop-water { display: block; }
+  .drop { animation: dropfall .8s ease-in infinite; }
+  @keyframes dropfall { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(16px); } }
   @media (prefers-reduced-motion: reduce) {
-    .bob, .screen, .plant, .lampglow, .steam, .sip, .walker .leg, .walker .arm, .wbob { animation: none; }
+    .bob, .screen, .codeline, .plant, .lampglow, .steam, .sip, .dusk,
+    .walker .thigh, .walker .shin, .walker .armW, .wbob, .confetti rect, .drop { animation: none; }
   }
 </style>
 </head>
 <body>
 <header>
   <h1>VIRTUAL OFFICE</h1>
-  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Kantor baru, mereka jalan antar meja sambil bawa handoff, live.</p>
+  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Mereka jalan antar meja sambil bawa handoff, live.</p>
 </header>
 <div class="rail" id="rail" aria-label="Tahap sprint">
   <span data-step="Think">THINK</span><span data-step="Plan">PLAN</span><span data-step="Build">BUILD</span><span data-step="Review">REVIEW</span><span data-step="Test">TEST</span><span data-step="Ship">SHIP</span><span data-step="Reflect">REFLECT</span>
@@ -110,42 +139,30 @@
       <polygon points="30,60 200,8 200,58 30,108"/>
       <polygon points="200,8 370,60 370,108 200,58"/>
     </clipPath>
-    <!-- Desk only (no figure). Seated figure is separate so it can hide while walking. -->
+    <!-- Desk with DUAL monitors (like the reference game), keyboard, succulent -->
     <g id="deskOnly">
       <polygon points="-58,8 58,8 70,26 -46,26" fill="#c98d4e"/>
       <polygon points="-46,26 70,26 70,52 -46,52" fill="#a06a35"/>
       <polygon points="-58,8 58,8 58,12 -58,12" fill="#e0aa6b"/>
       <rect x="-52" y="-18" width="4" height="24" fill="#6b4a26"/>
-      <rect x="-68" y="-40" width="36" height="26" rx="2" fill="#1d2b36"/>
-      <rect class="screen" x="-65" y="-37" width="30" height="20" rx="1" fill="#8fd4ff"/>
-      <polygon points="-52,2 -44,2 -45,10 -51,10" fill="#b3541e"/>
-      <ellipse cx="-48" cy="-3" rx="3" ry="6" fill="#2e7d32"/>
-      <ellipse cx="-52" cy="0" rx="2.5" ry="4" fill="#43a047"/>
-      <ellipse cx="-44" cy="0" rx="2.5" ry="4" fill="#388e3c"/>
+      <!-- dual monitors -->
+      <rect x="-40" y="-16" width="4" height="8" fill="#333"/>
+      <rect x="-8" y="-16" width="4" height="8" fill="#333"/>
+      <rect x="-58" y="-44" width="34" height="26" rx="2" fill="#1d2b36"/>
+      <rect class="screen" x="-55" y="-41" width="28" height="20" rx="1" fill="#4aa8e0"/>
+      <rect class="codeline" x="-52" y="-37" width="16" height="2.5" fill="#bfe6ff" style="animation-delay:.1s"/>
+      <rect class="codeline" x="-52" y="-32" width="22" height="2.5" fill="#8fd4ff" style="animation-delay:.7s"/>
+      <rect class="codeline" x="-52" y="-27" width="12" height="2.5" fill="#bfe6ff" style="animation-delay:1.2s"/>
+      <rect x="-20" y="-44" width="34" height="26" rx="2" fill="#1d2b36"/>
+      <rect class="screen" x="-17" y="-41" width="28" height="20" rx="1" fill="#4aa8e0"/>
+      <rect class="codeline" x="-14" y="-37" width="20" height="2.5" fill="#bfe6ff" style="animation-delay:.4s"/>
+      <rect class="codeline" x="-14" y="-32" width="13" height="2.5" fill="#8fd4ff" style="animation-delay:1s"/>
+      <rect class="codeline" x="-14" y="-27" width="18" height="2.5" fill="#bfe6ff" style="animation-delay:.2s"/>
+      <!-- keyboard + succulent -->
       <polygon points="-30,14 6,14 12,24 -24,24" fill="#5d4030"/>
-    </g>
-    <!-- Seated figure (chair + upper body). Shirt/hair/skin set per <use> via CSS vars. Face + accessories are real-DOM overlays added by JS. -->
-    <g id="seatFig">
-      <rect x="-10" y="-34" width="28" height="34" rx="7" fill="#8a6a42"/>
-      <g class="bob">
-        <rect x="-12" y="-26" width="34" height="42" rx="11" style="fill:var(--shirt,#888)"/>
-        <circle cx="5" cy="-38" r="12" style="fill:var(--skin,#f2c89b)"/>
-        <path d="M -7 -38 a 12 12 0 0 1 24 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="5" stroke-linecap="round"/>
-      </g>
-    </g>
-    <!-- Walking figure (feet at 0,0): swinging legs + arms, bobbing body, carries a paper (the handoff). -->
-    <g id="walker">
-      <ellipse cx="0" cy="2" rx="15" ry="4.5" fill="#000" opacity=".12"/>
-      <g class="wbob">
-        <rect class="leg a" x="-8" y="-17" width="7" height="18" rx="3" style="fill:var(--pants,#3a3a3a)"/>
-        <rect class="leg b" x="1" y="-17" width="7" height="18" rx="3" style="fill:var(--pants,#3a3a3a)"/>
-        <rect class="arm b" x="-18" y="-38" width="6" height="20" rx="3" style="fill:var(--shirt,#888)"/>
-        <rect class="arm a" x="12" y="-38" width="6" height="20" rx="3" style="fill:var(--shirt,#888)"/>
-        <rect x="-13" y="-40" width="26" height="26" rx="9" style="fill:var(--shirt,#888)"/>
-        <rect x="9" y="-32" width="12" height="15" rx="2" fill="#fff" stroke="#d8cbb2"/>
-        <circle cx="0" cy="-50" r="11" style="fill:var(--skin,#f2c89b)"/>
-        <path d="M -11 -50 a 11 11 0 0 1 22 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="4.5" stroke-linecap="round"/>
-      </g>
+      <ellipse cx="46" cy="-3" rx="3" ry="6" fill="#2e7d32"/>
+      <ellipse cx="42" cy="0" rx="2.5" ry="4" fill="#43a047"/>
+      <ellipse cx="50" cy="0" rx="2.5" ry="4" fill="#388e3c"/>
     </g>
     <!-- Potted plant -->
     <g id="plant">
@@ -203,11 +220,11 @@
     <line x1="115" y1="34" x2="115" y2="83"/><line x1="285" y1="34" x2="285" y2="83"/>
   </g>
   <polygon points="30,60 370,60 370,66 30,66" fill="#8a6a42"/>
-  <!-- Wall clock -->
+  <!-- Wall clock (hands move with real time, JS-driven) -->
   <g transform="translate(200,42)">
     <circle r="11" fill="#fff" stroke="#8a6a42" stroke-width="2"/>
-    <line x1="0" y1="0" x2="0" y2="-6" stroke="#2b2118" stroke-width="1.6"/>
-    <line x1="0" y1="0" x2="5" y2="0" stroke="#2b2118" stroke-width="1.6"/>
+    <line id="clockHour" x1="0" y1="0" x2="0" y2="-6" stroke="#2b2118" stroke-width="1.6"/>
+    <line id="clockMin" x1="0" y1="0" x2="5" y2="0" stroke="#2b2118" stroke-width="1.6"/>
     <circle r="1.5" fill="#2b2118"/>
   </g>
 
@@ -233,7 +250,7 @@
     <ellipse cx="200" cy="528" rx="165" ry="13"/>
     <ellipse cx="200" cy="638" rx="165" ry="13"/>
   </g>
-  <!-- Hanging pendant lamps (drawn after the floor so they stay visible) -->
+  <!-- Hanging pendant lamps -->
   <g id="lamps">
     <line x1="120" y1="58" x2="120" y2="104" stroke="#8a6a42" stroke-width="2"/>
     <polygon points="108,104 132,104 126,120 114,120" fill="#b3541e"/>
@@ -262,30 +279,27 @@
     <text x="-22" y="33" font-size="7.5" font-weight="700" text-anchor="middle" fill="#2b2118">1 SPRINT</text>
   </g>
 
-  <!-- Meeting table + CEO -->
-  <g data-role="office-hours">
+  <!-- Meeting table -->
+  <g>
     <ellipse cx="200" cy="140" rx="102" ry="30" fill="#8a5a2e"/>
     <ellipse cx="200" cy="134" rx="102" ry="30" fill="#c98d4e"/>
     <ellipse cx="200" cy="134" rx="86" ry="22" fill="#dbab72"/>
     <rect x="168" y="120" width="64" height="10" rx="2" fill="#5d4030"/>
-    <g class="seatFig" id="seat-office-hours" transform="translate(195,178)"><use href="#seatFig" style="--shirt:#e74c3c;--hair:#2c2c2c;--skin:#f2c89b"/></g>
     <rect x="150" y="120" width="16" height="11" rx="1" fill="#1d2b36"/>
     <rect class="screen" x="152" y="122" width="12" height="7" fill="#8fd4ff"/>
-    <g font-size="11" font-weight="700" text-anchor="middle" fill="#2b2118">
-      <rect x="168" y="192" width="64" height="18" rx="9" fill="#fff" stroke="#eadfc9"/>
-      <text x="200" y="205">CEO</text>
-    </g>
   </g>
 
-  <!-- Desk rows: 2 cols x 4 rows (desk + separate seated figure) -->
-  <g data-role="planner" transform="translate(100,250)"><use href="#deskOnly"/><g class="seatFig" id="seat-planner"><use href="#seatFig" style="--shirt:#3498db;--hair:#3b2f2f;--skin:#f2c89b"/></g></g>
-  <g data-role="builder" transform="translate(300,250)"><use href="#deskOnly"/><g class="seatFig" id="seat-builder"><use href="#seatFig" style="--shirt:#f39c12;--hair:#1f1f1f;--skin:#e8b88a"/></g></g>
-  <g data-role="reviewer" transform="translate(100,360)"><use href="#deskOnly"/><g class="seatFig" id="seat-reviewer"><use href="#seatFig" style="--shirt:#9b59b6;--hair:#4a2c14;--skin:#f2c89b"/></g></g>
-  <g data-role="qa" transform="translate(300,360)"><use href="#deskOnly"/><g class="seatFig" id="seat-qa"><use href="#seatFig" style="--shirt:#1abc9c;--hair:#2c2c2c;--skin:#d9a06b"/></g></g>
-  <g data-role="security-officer" transform="translate(100,470)"><use href="#deskOnly"/><g class="seatFig" id="seat-security-officer"><use href="#seatFig" style="--shirt:#2c3e50;--hair:#111111;--skin:#f2c89b"/></g></g>
-  <g data-role="finance-officer" transform="translate(300,470)"><use href="#deskOnly"/><g class="seatFig" id="seat-finance-officer"><use href="#seatFig" style="--shirt:#27ae60;--hair:#5b3a1e;--skin:#e8b88a"/></g></g>
-  <g data-role="content-creator" transform="translate(100,580)"><use href="#deskOnly"/><g class="seatFig" id="seat-content-creator"><use href="#seatFig" style="--shirt:#e91e63;--hair:#2c2c2c;--skin:#f2c89b"/></g></g>
-  <g data-role="release-engineer" transform="translate(300,580)"><use href="#deskOnly"/><g class="seatFig" id="seat-release-engineer"><use href="#seatFig" style="--shirt:#00bcd4;--hair:#3b2f2f;--skin:#d9a06b"/></g></g>
+  <!-- Desk rows: 2 cols x 4 rows (desks only; figures are JS-built into #seats) -->
+  <g data-role="planner" transform="translate(100,250)"><use href="#deskOnly"/></g>
+  <g data-role="builder" transform="translate(300,250)"><use href="#deskOnly"/></g>
+  <g data-role="reviewer" transform="translate(100,360)"><use href="#deskOnly"/></g>
+  <g data-role="qa" transform="translate(300,360)"><use href="#deskOnly"/></g>
+  <g data-role="security-officer" transform="translate(100,470)"><use href="#deskOnly"/></g>
+  <g data-role="finance-officer" transform="translate(300,470)"><use href="#deskOnly"/></g>
+  <g data-role="content-creator" transform="translate(100,580)"><use href="#deskOnly"/></g>
+  <g data-role="release-engineer" transform="translate(300,580)"><use href="#deskOnly"/></g>
+  <!-- CEO desk anchor for tap-a-desk -->
+  <g data-role="office-hours"><rect x="150" y="120" width="100" height="70" fill="transparent"/></g>
 
   <!-- Active-character rings (one per role, toggled by JS) -->
   <g fill="none" stroke="#b3541e" stroke-width="2" stroke-dasharray="6 4">
@@ -300,24 +314,14 @@
     <ellipse id="ring-release-engineer" cx="300" cy="638" rx="46" ry="8" opacity="0"/>
   </g>
 
-  <!-- Desk nameplates (on the desk front, so they never cover the next row) -->
-  <g font-size="11" font-weight="700" text-anchor="middle" fill="#2b2118">
-    <g transform="translate(100,250)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Planner</text></g>
-    <g transform="translate(300,250)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Builder</text></g>
-    <g transform="translate(100,360)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Reviewer</text></g>
-    <g transform="translate(300,360)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">QA</text></g>
-    <g transform="translate(100,470)"><rect x="-46" y="30" width="92" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Security</text></g>
-    <g transform="translate(300,470)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Finance</text></g>
-    <g transform="translate(100,580)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Content</text></g>
-    <g transform="translate(300,580)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Release</text></g>
-  </g>
+  <!-- Seated chibi figures (JS-built) -->
+  <g id="seats"></g>
 
   <!-- Lounge: rug, sofa, two friends chatting, coffee table -->
   <ellipse cx="150" cy="720" rx="120" ry="20" fill="#c96f4a" opacity=".75"/>
   <ellipse cx="150" cy="720" rx="92" ry="14" fill="none" stroke="#e8b64c" stroke-width="2" opacity=".7"/>
   <g transform="translate(105,712)"><use href="#sofa"/></g>
-  <g transform="translate(78,706) scale(.85)"><g class="seatFig" id="seat-lounge-a"><use href="#seatFig" style="--shirt:#e67e22;--hair:#2c2c2c;--skin:#e8b88a"/></g></g>
-  <g transform="translate(132,706) scale(.85)"><g class="seatFig" id="seat-lounge-b"><use href="#seatFig" style="--shirt:#16a085;--hair:#111111;--skin:#f2c89b"/></g></g>
+  <g id="loungeSeats"></g>
   <ellipse cx="225" cy="716" rx="34" ry="10" fill="#8a5a2e"/>
   <ellipse cx="225" cy="712" rx="34" ry="10" fill="#c98d4e"/>
   <rect x="216" y="700" width="8" height="10" rx="2" fill="#fff" stroke="#d8cbb2"/>
@@ -349,9 +353,12 @@
   <g transform="translate(32,420)"><use href="#plant"/></g>
   <g transform="translate(368,420)"><use href="#plant"/></g>
 
-  <!-- Walking characters (JS-driven, sambil bawa handoff) -->
+  <!-- Walking characters (JS-built) -->
   <g id="walkers"></g>
   <ellipse id="walkRing" cx="0" cy="0" rx="24" ry="7" fill="none" stroke="#b3541e" stroke-width="2" stroke-dasharray="5 4" opacity="0"/>
+
+  <!-- Confetti (JS spawns pieces here) -->
+  <g id="confetti" class="confetti" pointer-events="none"></g>
 
   <!-- Delivery pop burst (JS positions it, toggles .on) -->
   <g id="popFx" opacity="0">
@@ -363,6 +370,9 @@
 
   <!-- Chat bubbles (JS fills text, toggles .on) -->
   <g id="bubbles"></g>
+
+  <!-- Subtle day-to-evening warm tint -->
+  <rect class="dusk" x="0" y="0" width="400" height="780" fill="#ff9a3c" opacity="0" pointer-events="none"/>
 </svg>
 
 <div class="status" id="status"><span class="dots"><i></i><i></i><i></i></span> <span id="statusText">Sprint jalan…</span></div>
@@ -375,80 +385,189 @@
 </footer>
 
 <script>
-const ROLES = [
-  { id:'office-hours', short:'CEO', color:'#e74c3c', hair:'#2c2c2c', skin:'#f2c89b', step:'Think', x:200, y:150, file:'.team/brief.md', shortFile:'brief.md',
-    lines:['Brief udah siap,','lanjut ke planner'], status:'CEO lagi nulis <b>brief.md</b>…', bobd:2.2, bobdelay:0 },
-  { id:'planner', short:'Planner', color:'#3498db', hair:'#3b2f2f', skin:'#f2c89b', step:'Plan', x:100, y:250, file:'.team/design.md', shortFile:'design.md',
-    lines:['Desain selesai,','builder gas!'], status:'Planner lagi nulis <b>design.md</b>…', bobd:2.6, bobdelay:.3 },
-  { id:'builder', short:'Builder', color:'#f39c12', hair:'#1f1f1f', skin:'#e8b88a', step:'Build', x:300, y:250, file:'.team/build-log.md', shortFile:'build-log.md',
-    lines:['Build kelar,','cek review ya'], status:'Builder lagi nulis <b>build-log.md</b>…', bobd:3.0, bobdelay:.6 },
-  { id:'reviewer', short:'Reviewer', color:'#9b59b6', hair:'#4a2c14', skin:'#f2c89b', step:'Review', x:100, y:360, file:'.team/review.md', shortFile:'review.md',
-    lines:['Review oke,','lanjut QA'], status:'Reviewer lagi nulis <b>review.md</b>…', bobd:2.4, bobdelay:.15 },
-  { id:'qa', short:'QA', color:'#1abc9c', hair:'#2c2c2c', skin:'#d9a06b', step:'Test', x:300, y:360, file:'.team/qa-report.md', shortFile:'qa-report.md',
-    lines:['QA lolos,','semua aman'], status:'QA lagi nulis <b>qa-report.md</b>…', bobd:2.8, bobdelay:.45 },
-  { id:'security-officer', short:'Security', color:'#2c3e50', hair:'#111111', skin:'#f2c89b', step:'Test', x:100, y:470, file:'.team/security-report.md', shortFile:'security-report.md',
-    lines:['Security bersih,','no celah'], status:'Security lagi nulis <b>security-report.md</b>…', bobd:2.5, bobdelay:.75 },
-  { id:'finance-officer', short:'Finance', color:'#27ae60', hair:'#5b3a1e', skin:'#e8b88a', step:'Ship', x:300, y:470, file:'.team/finance.md', shortFile:'finance.md',
-    lines:['Budget aman,','semua tercatat'], status:'Finance lagi nulis <b>finance.md</b>…', bobd:2.9, bobdelay:.2 },
-  { id:'content-creator', short:'Content', color:'#e91e63', hair:'#2c2c2c', skin:'#f2c89b', step:'Ship', x:100, y:580, file:'.team/content.md', shortFile:'content.md',
-    lines:['Caption siap,','posting gas!'], status:'Content lagi nulis <b>content.md</b>…', bobd:2.3, bobdelay:.5 },
-  { id:'release-engineer', short:'Release', color:'#00bcd4', hair:'#3b2f2f', skin:'#d9a06b', step:'Reflect', x:300, y:580, file:'.team/release.md', shortFile:'release.md',
-    lines:['Siap deploy,','nunggu izin'], status:'Release lagi nulis <b>release.md</b>…', bobd:2.7, bobdelay:.9 },
-];
 const NS = 'http://www.w3.org/2000/svg';
+const ROLES = [
+  { id:'office-hours', short:'CEO', kd:'KD-01', color:'#e74c3c', hair:'#2c2c2c', skin:'#f2c89b', step:'Think', x:200, y:150, file:'.team/brief.md', shortFile:'brief.md',
+    lines:['Brief udah siap,','lanjut ke planner'], status:'CEO lagi nulis <b>brief.md</b>…', scale:1.05, lean:2, hairStyle:'flat', plaid:false, pants:'#2c3e50', armStyle:'rest', bobd:2.2, bobdelay:0 },
+  { id:'planner', short:'Planner', kd:'KD-02', color:'#3498db', hair:'#3b2f2f', skin:'#f2c89b', step:'Plan', x:100, y:250, file:'.team/design.md', shortFile:'design.md',
+    lines:['Desain selesai,','builder gas!'], status:'Planner lagi nulis <b>design.md</b>…', scale:0.98, lean:-3, hairStyle:'tuft', plaid:false, pants:'#34495e', armStyle:'type', bobd:2.6, bobdelay:.3 },
+  { id:'builder', short:'Builder', kd:'KD-03', color:'#f39c12', hair:'#1f1f1f', skin:'#e8b88a', step:'Build', x:300, y:250, file:'.team/build-log.md', shortFile:'build-log.md',
+    lines:['Build kelar,','cek review ya'], status:'Builder lagi nulis <b>build-log.md</b>…', scale:1.08, lean:4, hairStyle:'messy', plaid:false, pants:'#3a3a3a', armStyle:'type', bobd:3.0, bobdelay:.6 },
+  { id:'reviewer', short:'Reviewer', kd:'KD-04', color:'#9b59b6', hair:'#4a2c14', skin:'#f2c89b', step:'Review', x:100, y:360, file:'.team/review.md', shortFile:'review.md',
+    lines:['Review oke,','lanjut QA'], status:'Reviewer lagi nulis <b>review.md</b>…', scale:0.95, lean:-2, hairStyle:'flat', plaid:false, pants:'#2c2c2c', armStyle:'type', bobd:2.4, bobdelay:.15 },
+  { id:'qa', short:'QA', kd:'KD-05', color:'#1abc9c', hair:'#2c2c2c', skin:'#d9a06b', step:'Test', x:300, y:360, file:'.team/qa-report.md', shortFile:'qa-report.md',
+    lines:['QA lolos,','semua aman'], status:'QA lagi nulis <b>qa-report.md</b>…', scale:0.97, lean:3, hairStyle:'long', plaid:false, pants:'#3a3a3a', armStyle:'type', bobd:2.8, bobdelay:.45 },
+  { id:'security-officer', short:'Security', kd:'KD-06', color:'#2c3e50', hair:'#111111', skin:'#f2c89b', step:'Test', x:100, y:470, file:'.team/security-report.md', shortFile:'security-report.md',
+    lines:['Security bersih,','no celah'], status:'Security lagi nulis <b>security-report.md</b>…', scale:1.06, lean:0, hairStyle:'flattop', plaid:false, pants:'#1f1f1f', armStyle:'rest', bobd:2.5, bobdelay:.75 },
+  { id:'finance-officer', short:'Finance', kd:'KD-07', color:'#27ae60', hair:'#5b3a1e', skin:'#e8b88a', step:'Ship', x:300, y:470, file:'.team/finance.md', shortFile:'finance.md',
+    lines:['Budget aman,','semua tercatat'], status:'Finance lagi nulis <b>finance.md</b>…', scale:0.94, lean:-4, hairStyle:'messy', plaid:true, pants:'#34495e', armStyle:'type', bobd:2.9, bobdelay:.2 },
+  { id:'content-creator', short:'Content', kd:'KD-08', color:'#e91e63', hair:'#2c2c2c', skin:'#f2c89b', step:'Ship', x:100, y:580, file:'.team/content.md', shortFile:'content.md',
+    lines:['Caption siap,','posting gas!'], status:'Content lagi nulis <b>content.md</b>…', scale:0.96, lean:5, hairStyle:'long', plaid:false, pants:'#2c2c2c', armStyle:'onehand', bobd:2.3, bobdelay:.5 },
+  { id:'release-engineer', short:'Release', kd:'KD-09', color:'#00bcd4', hair:'#3b2f2f', skin:'#d9a06b', step:'Reflect', x:300, y:580, file:'.team/release.md', shortFile:'release.md',
+    lines:['Siap deploy,','nunggu izin'], status:'Release lagi nulis <b>release.md</b>…', scale:1.0, lean:-3, hairStyle:'cap', plaid:false, pants:'#3a3a3a', armStyle:'type', bobd:2.7, bobdelay:.9 },
+];
 
-/* ---- faces + per-role accessories (real-DOM overlays so expressions can change) ---- */
-const FACE_SEAT = `<g class="face">
-  <circle class="n" cx="0" cy="-40" r="1.7" fill="#2b2118"/><circle class="n" cx="10" cy="-40" r="1.7" fill="#2b2118"/>
-  <path class="h" d="M -2.5 -40 Q 0 -43.5 2.5 -40" fill="none" stroke="#2b2118" stroke-width="1.8" stroke-linecap="round"/>
-  <path class="h" d="M 7.5 -40 Q 10 -43.5 12.5 -40" fill="none" stroke="#2b2118" stroke-width="1.8" stroke-linecap="round"/>
-  <path class="n" d="M 1 -32 Q 5 -29 9 -32" fill="none" stroke="#2b2118" stroke-width="1.6" stroke-linecap="round"/>
-  <path class="h" d="M 0 -33 Q 5 -27 10 -33 Q 5 -30 0 -33 Z" fill="#7a3b2e"/>
-  <circle cx="-2" cy="-34" r="2" fill="#f5a3a3" opacity=".5"/><circle cx="12" cy="-34" r="2" fill="#f5a3a3" opacity=".5"/>
-</g>`;
-const FACE_WALK = `<g class="face">
-  <circle class="n" cx="-4" cy="-52" r="1.6" fill="#2b2118"/><circle class="n" cx="4" cy="-52" r="1.6" fill="#2b2118"/>
-  <path class="h" d="M -6.5 -52 Q -4 -55.5 -1.5 -52" fill="none" stroke="#2b2118" stroke-width="1.7" stroke-linecap="round"/>
-  <path class="h" d="M 1.5 -52 Q 4 -55.5 6.5 -52" fill="none" stroke="#2b2118" stroke-width="1.7" stroke-linecap="round"/>
-  <path class="n" d="M -3 -45 Q 0 -42.5 3 -45" fill="none" stroke="#2b2118" stroke-width="1.5" stroke-linecap="round"/>
-  <path class="h" d="M -4 -46 Q 0 -40 4 -46 Q 0 -43.5 -4 -46 Z" fill="#7a3b2e"/>
-  <circle cx="-7" cy="-46" r="1.8" fill="#f5a3a3" opacity=".5"/><circle cx="7" cy="-46" r="1.8" fill="#f5a3a3" opacity=".5"/>
-</g>`;
-/* seat frame: head (5,-38) r12, body x -12..22 y -26..16. walk frame: head (0,-50) r11, body x -13..13 y -40..-14. */
-const ACC = {
-  'office-hours': {
-    seat: `<polygon points="0,-26 5,-22 10,-26 8,-28 2,-28" fill="#fff"/><polygon points="2,-24 8,-24 7,-8 5,-3 3,-8" fill="#1f3a5f"/>`,
-    walk: `<polygon points="-3,-38 3,-38 2,-20 0,-16 -2,-20" fill="#1f3a5f"/>` },
-  'planner': {
-    seat: `<path d="M 2 -49 L 5 -56 L 8 -49 Z" fill="#3b2f2f"/><g transform="rotate(12 20 -14)"><rect x="17" y="-22" width="7" height="17" rx="3.5" fill="#fff" stroke="#7fb3d5"/><line x1="19" y1="-17" x2="22" y2="-17" stroke="#7fb3d5"/><line x1="19" y1="-13" x2="22" y2="-13" stroke="#7fb3d5"/></g>`,
-    walk: `<path d="M -3 -60 L 0 -66 L 3 -60 Z" fill="#3b2f2f"/><g transform="rotate(10 12 -28)"><rect x="9" y="-36" width="7" height="16" rx="3.5" fill="#fff" stroke="#7fb3d5"/></g>` },
-  'builder': {
-    seat: `<path d="M -8 -40 a 13 13 0 0 1 26 0 l 0 1 -26 0 Z" fill="#f7c948"/><rect x="-10" y="-41" width="30" height="4" rx="2" fill="#e0a92e"/>`,
-    walk: `<path d="M -11 -50 a 11 11 0 0 1 22 0 l 0 1 -22 0 Z" fill="#f7c948"/><rect x="-13" y="-51" width="26" height="4" rx="2" fill="#e0a92e"/>` },
-  'reviewer': {
-    seat: `<circle cx="0" cy="-40" r="4.6" fill="none" stroke="#2b2118" stroke-width="1.6"/><circle cx="10" cy="-40" r="4.6" fill="none" stroke="#2b2118" stroke-width="1.6"/>`,
-    walk: `<circle cx="-4" cy="-52" r="4.2" fill="none" stroke="#2b2118" stroke-width="1.5"/><circle cx="4" cy="-52" r="4.2" fill="none" stroke="#2b2118" stroke-width="1.5"/>` },
-  'qa': {
-    seat: `<path d="M -7 -42 a 12 12 0 0 1 24 0" fill="none" stroke="#2b2118" stroke-width="3"/><rect x="-10" y="-44" width="5" height="9" rx="2" fill="#2b2118"/><rect x="15" y="-44" width="5" height="9" rx="2" fill="#2b2118"/><path d="M 17 -36 Q 18 -30 10 -29" fill="none" stroke="#2b2118" stroke-width="1.6"/><g class="sip"><rect x="14" y="-14" width="9" height="11" rx="2" fill="#fff" stroke="#d8cbb2"/><rect x="23" y="-11" width="4" height="5" rx="2" fill="none" stroke="#d8cbb2"/><rect x="15.5" y="-16" width="6" height="3" fill="#6f4e37"/></g>`,
-    walk: `<path d="M -10 -54 a 11 11 0 0 1 20 0" fill="none" stroke="#2b2118" stroke-width="2.8"/><rect x="-13" y="-56" width="5" height="9" rx="2" fill="#2b2118"/><rect x="8" y="-56" width="5" height="9" rx="2" fill="#2b2118"/><path d="M 10 -46 Q 11 -41 4 -40" fill="none" stroke="#2b2118" stroke-width="1.5"/>` },
-  'security-officer': {
-    seat: `<rect x="-6" y="-52" width="22" height="6" rx="2" fill="#111"/><path d="M 5 -20 L 11 -18 L 11 -12 Q 11 -7 5 -5 Q -1 -7 -1 -12 L -1 -18 Z" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>`,
-    walk: `<rect x="-9" y="-62" width="18" height="5" rx="2" fill="#111"/><path d="M 0 -32 L 6 -30 L 6 -24 Q 6 -19 0 -17 Q -6 -19 -6 -24 L -6 -30 Z" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>` },
-  'finance-officer': {
-    seat: `<polygon points="2,-24 8,-24 7,-8 5,-3 3,-8" fill="#145a32"/><g transform="rotate(-10 18 -12)"><rect x="13" y="-20" width="12" height="16" rx="2" fill="#34495e"/><rect x="15" y="-18" width="8" height="4" fill="#8fd4ff"/><circle cx="17" cy="-10" r="1.2" fill="#fff"/><circle cx="21" cy="-10" r="1.2" fill="#fff"/><circle cx="17" cy="-6" r="1.2" fill="#fff"/><circle cx="21" cy="-6" r="1.2" fill="#fff"/></g>`,
-    walk: `<polygon points="-3,-38 3,-38 2,-20 0,-16 -2,-20" fill="#145a32"/><circle cx="-8" cy="-24" r="3.6" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>` },
-  'content-creator': {
-    seat: `<path d="M -7 -44 Q -10 -28 -6 -20 L -3 -20 Q -6 -30 -4 -42 Z" fill="#2c2c2c"/><path d="M 17 -44 Q 20 -28 16 -20 L 13 -20 Q 16 -30 14 -42 Z" fill="#2c2c2c"/><g transform="rotate(-18 20 -24)"><polygon points="14,-28 26,-34 26,-18 14,-22" fill="#e91e63"/><rect x="11" y="-26" width="5" height="8" rx="2" fill="#8a1042"/></g>`,
-    walk: `<path d="M -11 -54 Q -14 -40 -10 -33 L -7 -33 Q -10 -42 -8 -52 Z" fill="#2c2c2c"/><path d="M 11 -54 Q 14 -40 10 -33 L 7 -33 Q 10 -42 8 -52 Z" fill="#2c2c2c"/><g transform="rotate(18 -20 -28)"><polygon points="-14,-30 -26,-36 -26,-20 -14,-24" fill="#e91e63"/><rect x="-16" y="-28" width="5" height="8" rx="2" fill="#8a1042"/></g>` },
-  'release-engineer': {
-    seat: `<path d="M -7 -42 a 12 12 0 0 1 24 0 l 0 -1 -24 0 Z" fill="#008ba3"/><rect x="12" y="-44" width="11" height="4" rx="2" fill="#008ba3"/><g transform="translate(5,-12)"><ellipse cx="0" cy="0" rx="3.5" ry="5" fill="#fff" stroke="#b3541e"/><polygon points="-3,2 -6,7 -2,5" fill="#e74c3c"/><polygon points="3,2 6,7 2,5" fill="#e74c3c"/><circle cx="0" cy="-1" r="1.4" fill="#8fd4ff"/></g>`,
-    walk: `<path d="M -11 -52 a 11 11 0 0 1 22 0 l 0 -1 -22 0 Z" fill="#008ba3"/><rect x="8" y="-54" width="10" height="4" rx="2" fill="#008ba3"/><g transform="translate(0,-26)"><ellipse cx="0" cy="0" rx="3.5" ry="5" fill="#fff" stroke="#b3541e"/><polygon points="-3,2 -6,7 -2,5" fill="#e74c3c"/><polygon points="3,2 6,7 2,5" fill="#e74c3c"/><circle cx="0" cy="-1" r="1.4" fill="#8fd4ff"/></g>` },
-};
-function attachOverlay(host, kind, roleId) {
+/* ---------- chibi faces ---------- */
+function faceSVG(cx, cy, r) {
+  return `<g class="face">
+    <circle class="n" cx="${cx - r * 0.36}" cy="${cy - r * 0.08}" r="${r * 0.14}" fill="#2b2118"/>
+    <circle class="n" cx="${cx + r * 0.36}" cy="${cy - r * 0.08}" r="${r * 0.14}" fill="#2b2118"/>
+    <path class="h" d="M ${cx - r * 0.52} ${cy - r * 0.08} Q ${cx - r * 0.36} ${cy - r * 0.34} ${cx - r * 0.2} ${cy - r * 0.08}" fill="none" stroke="#2b2118" stroke-width="${r * 0.14}" stroke-linecap="round"/>
+    <path class="h" d="M ${cx + r * 0.2} ${cy - r * 0.08} Q ${cx + r * 0.36} ${cy - r * 0.34} ${cx + r * 0.52} ${cy - r * 0.08}" fill="none" stroke="#2b2118" stroke-width="${r * 0.14}" stroke-linecap="round"/>
+    <path class="n" d="M ${cx - r * 0.32} ${cy + r * 0.5} Q ${cx} ${cy + r * 0.72} ${cx + r * 0.32} ${cy + r * 0.5}" fill="none" stroke="#2b2118" stroke-width="${r * 0.13}" stroke-linecap="round"/>
+    <path class="h" d="M ${cx - r * 0.4} ${cy + r * 0.42} Q ${cx} ${cy + r * 0.95} ${cx + r * 0.4} ${cy + r * 0.42} Q ${cx} ${cy + r * 0.62} ${cx - r * 0.4} ${cy + r * 0.42} Z" fill="#7a3b2e"/>
+    <circle cx="${cx - r * 0.64}" cy="${cy + r * 0.28}" r="${r * 0.16}" fill="#f5a3a3" opacity=".55"/>
+    <circle cx="${cx + r * 0.64}" cy="${cy + r * 0.28}" r="${r * 0.16}" fill="#f5a3a3" opacity=".55"/>
+  </g>`;
+}
+/* hair: seat head (0,-62) r12.5; walk head (0,-60) r11 */
+function hairSVG(style, color, frame) {
+  const s = frame === 'seat' ? 1 : 0.88;
+  const cy = frame === 'seat' ? -62 : -60, r = frame === 'seat' ? 12.5 : 11;
+  const top = cy - r, left = -r, right = r;
+  const cap = `<path d="M ${left} ${cy} a ${r} ${r} 0 0 1 ${r * 2} 0 L ${right} ${cy - 1} Q ${right * 0.6} ${top - 2} 0 ${top - 2} Q ${left * 0.6} ${top - 2} ${left} ${cy - 1} Z" fill="${color}"/>`;
+  switch (style) {
+    case 'messy': return cap + `<polygon points="-9,${top - 1} -6,${top - 8} -3,${top - 1}" fill="${color}"/><polygon points="0,${top - 2} 3,${top - 9} 6,${top - 2}" fill="${color}"/><polygon points="7,${top - 1} 10,${top - 7} 12,${top}" fill="${color}"/>`;
+    case 'tuft': return cap + `<path d="M -2,${top - 2} Q 0,${top - 11} 4,${top - 2} Q 1,${top - 5} -2,${top - 2} Z" fill="${color}"/>`;
+    case 'long': return cap + `<path d="M ${left} ${cy} Q ${left - 2} ${cy + r * 1.4} ${left + 1} ${cy + r * 1.7} L ${left + 5} ${cy + r * 1.6} Q ${left + 3} ${cy + r} ${left + 2} ${cy} Z" fill="${color}"/><path d="M ${right} ${cy} Q ${right + 2} ${cy + r * 1.4} ${right - 1} ${cy + r * 1.7} L ${right - 5} ${cy + r * 1.6} Q ${right - 3} ${cy + r} ${right - 2} ${cy} Z" fill="${color}"/>`;
+    case 'flattop': return `<rect x="${left + 1}" y="${top - 2}" width="${r * 2 - 2}" height="7" rx="2" fill="${color}"/><path d="M ${left} ${cy} a ${r} ${r} 0 0 1 ${r * 2} 0 L ${right} ${cy - 1} L ${right} ${top + 4} L ${left} ${top + 4} Z" fill="${color}"/>`;
+    case 'cap': return cap + `<ellipse cx="0" cy="${top - 1}" rx="${r}" ry="3.5" fill="#008ba3"/><rect x="${-r}" y="${top - 3}" width="${r * 2}" height="4" rx="2" fill="#008ba3"/>`;
+    default: return cap;
+  }
+}
+/* ---------- accessories (chibi) ---------- */
+function accSeat(id) {
+  switch (id) {
+    case 'office-hours': return `<polygon points="-4,-50 4,-50 2,-45 -2,-45" fill="#fff"/><polygon points="0,-45 4,-43 3,-28 0,-24 -3,-28 -4,-43" fill="#1f3a5f"/>`;
+    case 'planner': return `<g transform="rotate(12 18 -32)"><rect x="15" y="-42" width="7" height="18" rx="3.5" fill="#fff" stroke="#7fb3d5" stroke-width="1"/><line x1="17" y1="-37" x2="20" y2="-37" stroke="#7fb3d5"/><line x1="17" y1="-33" x2="20" y2="-33" stroke="#7fb3d5"/></g>`;
+    case 'builder': return `<path d="M -12.5 -63 a 12.5 12.5 0 0 1 25 0 l 0 1 -25 0 Z" fill="#f7c948"/><rect x="-14" y="-64" width="28" height="4" rx="2" fill="#e0a92e"/>`;
+    case 'reviewer': return `<circle cx="-4.5" cy="-63" r="4.8" fill="none" stroke="#2b2118" stroke-width="1.6"/><circle cx="4.5" cy="-63" r="4.8" fill="none" stroke="#2b2118" stroke-width="1.6"/><line x1="0" y1="-63" x2="0" y2="-63" stroke="#2b2118"/>`;
+    case 'qa': return `<path d="M -12 -64 a 12 12 0 0 1 24 0" fill="none" stroke="#2b2118" stroke-width="3"/><rect x="-14.5" y="-66" width="5" height="9" rx="2" fill="#2b2118"/><rect x="9.5" y="-66" width="5" height="9" rx="2" fill="#2b2118"/><path d="M 11 -58 Q 13 -52 5 -51" fill="none" stroke="#2b2118" stroke-width="1.5"/><g class="sip"><rect x="13" y="-32" width="9" height="11" rx="2" fill="#fff" stroke="#d8cbb2"/><rect x="22" y="-29" width="4" height="5" rx="2" fill="none" stroke="#d8cbb2"/><rect x="14.5" y="-34" width="6" height="3" fill="#6f4e37"/></g>`;
+    case 'security-officer': return `<path d="M 0 -46 L 6.5 -44 L 6.5 -37 Q 6.5 -31.5 0 -29 Q -6.5 -31.5 -6.5 -37 L -6.5 -44 Z" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>`;
+    case 'finance-officer': return `<g transform="rotate(-10 18 -26)"><rect x="12" y="-34" width="12" height="16" rx="2" fill="#34495e"/><rect x="14" y="-32" width="8" height="4" fill="#8fd4ff"/><circle cx="16" cy="-24" r="1.2" fill="#fff"/><circle cx="20" cy="-24" r="1.2" fill="#fff"/><circle cx="16" cy="-20" r="1.2" fill="#fff"/><circle cx="20" cy="-20" r="1.2" fill="#fff"/></g>`;
+    case 'content-creator': return `<g transform="rotate(-18 18 -42)"><polygon points="12,-48 26,-54 26,-38 12,-42" fill="#e91e63"/><rect x="9" y="-46" width="5" height="8" rx="2" fill="#8a1042"/></g>`;
+    case 'release-engineer': return `<g transform="translate(0,-38)"><ellipse cx="0" cy="0" rx="3.5" ry="5" fill="#fff" stroke="#b3541e"/><polygon points="-3,2 -6,7 -2,5" fill="#e74c3c"/><polygon points="3,2 6,7 2,5" fill="#e74c3c"/><circle cx="0" cy="-1" r="1.4" fill="#8fd4ff"/></g>`;
+    default: return '';
+  }
+}
+function accWalk(id) {
+  switch (id) {
+    case 'office-hours': return `<polygon points="-3,-50 3,-50 2,-46 -2,-46" fill="#fff"/><polygon points="0,-46 3,-44 2,-32 0,-28 -2,-32 -3,-44" fill="#1f3a5f"/>`;
+    case 'planner': return `<g transform="rotate(10 12 -34)"><rect x="9" y="-42" width="7" height="16" rx="3.5" fill="#fff" stroke="#7fb3d5" stroke-width="1"/></g>`;
+    case 'builder': return `<path d="M -11 -61 a 11 11 0 0 1 22 0 l 0 1 -22 0 Z" fill="#f7c948"/><rect x="-13" y="-62" width="26" height="4" rx="2" fill="#e0a92e"/>`;
+    case 'reviewer': return `<circle cx="-4" cy="-62" r="4.2" fill="none" stroke="#2b2118" stroke-width="1.5"/><circle cx="4" cy="-62" r="4.2" fill="none" stroke="#2b2118" stroke-width="1.5"/>`;
+    case 'qa': return `<path d="M -10 -62 a 10 10 0 0 1 20 0" fill="none" stroke="#2b2118" stroke-width="2.8"/><rect x="-12.5" y="-64" width="4.5" height="8" rx="2" fill="#2b2118"/><rect x="8" y="-64" width="4.5" height="8" rx="2" fill="#2b2118"/>`;
+    case 'security-officer': return `<path d="M 0 -44 L 6 -42 L 6 -36 Q 6 -31 0 -29 Q -6 -31 -6 -36 L -6 -42 Z" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>`;
+    case 'finance-officer': return `<circle cx="-8" cy="-38" r="3.6" fill="#f7c948" stroke="#b8860b" stroke-width="1"/>`;
+    case 'content-creator': return `<g transform="rotate(18 -14 -40)"><polygon points="-12,-46 -24,-52 -24,-36 -12,-40" fill="#e91e63"/><rect x="-16" y="-44" width="5" height="8" rx="2" fill="#8a1042"/></g>`;
+    case 'release-engineer': return `<g transform="translate(0,-36)"><ellipse cx="0" cy="0" rx="3.5" ry="5" fill="#fff" stroke="#b3541e"/><polygon points="-3,2 -6,7 -2,5" fill="#e74c3c"/><polygon points="3,2 6,7 2,5" fill="#e74c3c"/><circle cx="0" cy="-1" r="1.4" fill="#8fd4ff"/></g>`;
+    default: return '';
+  }
+}
+/* dark name-tag pill like the reference game: colored dot + name + code */
+function nameTag(label, color, sub) {
+  const text = sub ? `${label} ${sub}` : label;
+  const w = 26 + text.length * 5.6;
+  return `<g class="nametag">
+    <rect x="${-w / 2}" y="4" width="${w}" height="17" rx="8.5" fill="#2b2118" opacity=".94"/>
+    <circle cx="${-w / 2 + 9}" cy="12.5" r="3.5" fill="${color}"/>
+    <text x="${-w / 2 + 17}" y="16" font-size="10" font-weight="700" fill="#fff">${text}</text>
+  </g>`;
+}
+/* seated arm: shoulder (sx,sy), elbow (ex,ey), hand (hx,hy); forearm group animates when typing */
+function seatArm(side, sx, sy, ex, ey, hx, hy, shirt, typing) {
+  const cls = side === 'L' ? 'armL' : 'armR';
+  const faCls = side === 'L' ? 'fa-l' : 'fa-r';
+  return `<g class="${cls}" style="transform-origin: ${sx}px ${sy}px">
+    <path d="M ${sx} ${sy} L ${ex} ${ey}" stroke="${shirt}" stroke-width="6.5" stroke-linecap="round" fill="none"/>
+    <circle cx="${ex}" cy="${ey}" r="3.4" fill="${shirt}"/>
+    <g class="${faCls}" style="transform-origin: ${ex}px ${ey}px">
+      <path d="M ${ex} ${ey} L ${hx} ${hy}" stroke="${shirt}" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+      <circle cx="${hx}" cy="${hy}" r="3.2" fill="#f2c89b"/>
+    </g>
+  </g>`;
+}
+/* build a seated chibi figure (chair + leaning body + head + arms + face + accessory + tag) */
+function buildSeatFigure(r, opts = {}) {
   const g = document.createElementNS(NS, 'g');
-  g.setAttribute('class', 'acc ' + (kind === 'seat' ? 'bob' : 'wbob'));
-  g.innerHTML = (kind === 'seat' ? FACE_SEAT : FACE_WALK) + (ACC[roleId] ? ACC[roleId][kind] : '');
-  host.appendChild(g);
+  g.setAttribute('class', 'seatFig' + (opts.typing === false ? '' : ' typing'));
+  const s = r.scale || 1, lean = r.lean || 0;
+  const shirt = r.color, skin = r.skin, hair = r.hair;
+  const plaid = r.plaid ? `<rect x="-3" y="-52" width="6" height="28" fill="#000" opacity=".18"/><rect x="-13" y="-40" width="26" height="4" fill="#000" opacity=".18"/>` : '';
+  const armL = r.armStyle === 'rest'
+    ? seatArm('L', -11, -44, -13, -26, -14, -4, shirt, false)
+    : seatArm('L', -11, -44, -8, -24, -4, 4, shirt, true);
+  const armR = r.armStyle === 'onehand'
+    ? seatArm('R', 11, -44, 12, -26, 4, -6, shirt, false)
+    : seatArm('R', 11, -44, 8, -24, 4, 4, shirt, true);
+  const tag = opts.noTag ? '' : nameTag(r.short, r.color, r.kd);
+  g.innerHTML = `
+    <g transform="scale(${s})">
+      <g class="chair">
+        <rect x="-15" y="-56" width="30" height="30" rx="7" fill="#262626"/>
+        <rect x="-14" y="-28" width="28" height="8" rx="4" fill="#333"/>
+        <rect x="-2" y="-20" width="4" height="14" fill="#1a1a1a"/>
+        <circle cx="-10" cy="-3" r="2.6" fill="#111"/><circle cx="0" cy="-3" r="2.6" fill="#111"/><circle cx="10" cy="-3" r="2.6" fill="#111"/>
+      </g>
+      <g class="lean" style="transform: rotate(${lean}deg); transform-origin: 0px -26px">
+        <g class="figbody bob" style="--bobd:${r.bobd || 2.6}s;--bobdelay:${r.bobdelay || 0}s">
+          <rect x="-13" y="-52" width="26" height="28" rx="10" fill="${shirt}"/>${plaid}
+          ${armL}${armR}
+          <circle cx="0" cy="-62" r="12.5" fill="${skin}"/>
+          ${hairSVG(r.hairStyle, hair, 'seat')}
+          ${faceSVG(0, -62, 12.5)}
+          ${accSeat(r.id)}
+        </g>
+      </g>
+      ${tag}
+    </g>`;
+  return g;
+}
+/* build a walking chibi figure (two-segment legs/arms, leaning body, paper, tag, props) */
+function buildWalker(r) {
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'walker');
+  g.setAttribute('id', 'walker-' + r.id);
+  const s = r.scale || 1, shirt = r.color, skin = r.skin, pants = r.pants || '#3a3a3a';
+  g.innerHTML = `
+   <g transform="scale(${s})"><g class="wflip">
+      <ellipse cx="0" cy="2" rx="15" ry="4.5" fill="#000" opacity=".12"/>
+      <g class="wlean" style="transform: rotate(6deg); transform-origin: 0px -30px">
+        <g class="wbob">
+          <g class="thigh a"><rect x="-7" y="-30" width="6" height="17" rx="3" fill="${pants}"/></g>
+          <g class="thigh b"><rect x="1" y="-30" width="6" height="17" rx="3" fill="${pants}"/></g>
+          <g class="shin a"><rect x="-6.5" y="-14" width="6" height="15" rx="3" fill="${pants}"/><ellipse cx="-3.5" cy="1" rx="4" ry="2" fill="#262626"/></g>
+          <g class="shin b"><rect x="0.5" y="-14" width="6" height="15" rx="3" fill="${pants}"/><ellipse cx="3.5" cy="1" rx="4" ry="2" fill="#262626"/></g>
+          <g class="armW a" style="transform-origin: -11px -46px">
+            <rect x="-14" y="-46" width="6" height="16" rx="3" fill="${shirt}"/>
+            <g style="transform: rotate(22deg); transform-origin: -11px -30px"><rect x="-14" y="-30" width="5.5" height="14" rx="2.75" fill="${shirt}"/><circle cx="-11" cy="-16" r="3" fill="${skin}"/></g>
+          </g>
+          <g class="armW b" style="transform-origin: 11px -46px">
+            <rect x="8" y="-46" width="6" height="16" rx="3" fill="${shirt}"/>
+            <g style="transform: rotate(-22deg); transform-origin: 11px -30px"><rect x="8.5" y="-30" width="5.5" height="14" rx="2.75" fill="${shirt}"/><circle cx="11" cy="-16" r="3" fill="${skin}"/></g>
+          </g>
+          <rect x="-12" y="-52" width="24" height="25" rx="9" fill="${shirt}"/>
+          <rect x="9" y="-38" width="12" height="15" rx="2" fill="#fff" stroke="#d8cbb2"/>
+          <circle cx="0" cy="-60" r="11" fill="${skin}"/>
+          ${hairSVG(r.hairStyle, r.hair, 'walk')}
+          ${faceSVG(0, -60, 11)}
+          ${accWalk(r.id)}
+          <g class="prop-sip">
+            <rect x="12" y="-58" width="9" height="11" rx="2" fill="#fff" stroke="#d8cbb2"/>
+            <path class="steam" d="M 16 -60 q 2 -4 0 -7" stroke="#fff" fill="none" stroke-width="1.5" opacity=".7"/>
+          </g>
+          <g class="prop-water">
+            <g transform="rotate(-24 14 -36)"><rect x="10" y="-44" width="12" height="9" rx="2" fill="#7fb3d5"/><rect x="20" y="-41" width="8" height="3" fill="#5d8fb0"/></g>
+            <circle class="drop" cx="28" cy="-34" r="1.8" fill="#4aa8e0"/>
+            <circle class="drop" cx="31" cy="-30" r="1.5" fill="#4aa8e0" style="animation-delay:.3s"/>
+            <circle class="drop" cx="25" cy="-28" r="1.5" fill="#4aa8e0" style="animation-delay:.55s"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    ${nameTag(r.short, r.color, r.kd)}
+   </g>`;
+  return g;
 }
 function setHappy(r, on) {
   if (!r.seatFig || !r.walker) return;
@@ -456,10 +575,11 @@ function setHappy(r, on) {
   r.walker.classList.toggle('happy', on);
 }
 
+/* ---------- bubbles + legend ---------- */
 const bubblesEl = document.getElementById('bubbles');
 ROLES.forEach(r => {
   const wrap = document.createElementNS(NS, 'g');
-  wrap.setAttribute('transform', `translate(${r.x},${r.y - 108})`);
+  wrap.setAttribute('transform', `translate(${r.x},${r.y - 128})`);
   const g = document.createElementNS(NS, 'g');
   g.setAttribute('class', 'bubble');
   g.setAttribute('data-bubble', r.id);
@@ -481,55 +601,58 @@ ROLES.forEach(r => {
   d.innerHTML = `<i style="background:${r.color}"></i><span>${r.short}<small>${r.id} → ${r.file}</small></span>`;
   legendEl.appendChild(d);
 });
-/* ---------- walking: sambil mengerjakan — antar handoff ke spot berikut ---------- */
+
+/* ---------- build figures ---------- */
+const seatsEl = document.getElementById('seats');
+const walkersEl = document.getElementById('walkers');
+ROLES.forEach(r => {
+  const seat = buildSeatFigure(r);
+  seat.setAttribute('id', 'seat-' + r.id);
+  seat.setAttribute('transform', r.id === 'office-hours' ? 'translate(195,178)' : `translate(${r.x},${r.y + 18})`);
+  seatsEl.appendChild(seat);
+  r.seatFig = seat;
+  const w = buildWalker(r);
+  walkersEl.appendChild(w);
+  r.walker = w;
+  r.home = r.id === 'office-hours' ? { x: 200, y: 188 } : { x: r.x, y: r.y + 18 };
+  r.pos = { ...r.home };
+  r.state = 'seated'; r.facing = 1; r.destLabel = ''; r.destKind = '';
+  r.path = []; r.seg = 0; r.from = null; r.to = null; r.dist = 0; r.done = 0;
+  r.pauseT = 0; r.riseT = 0; r.settleT = 0; r.idleT = 1 + Math.random() * 6;
+});
+/* lounge friends (chibi, no name tags) */
+const loungeEl = document.getElementById('loungeSeats');
+[
+  { id: 'lounge-a', color: '#e67e22', hair: '#2c2c2c', skin: '#e8b88a', hairStyle: 'messy', scale: 0.85, lean: -4, bobd: 2.4, bobdelay: 0, armStyle: 'rest', plaid: false, short: 'A', kd: '' },
+  { id: 'lounge-b', color: '#16a085', hair: '#111111', skin: '#f2c89b', hairStyle: 'flat', scale: 0.85, lean: 4, bobd: 2.9, bobdelay: 0.8, armStyle: 'rest', plaid: false, short: 'B', kd: '' },
+].forEach((f, i) => {
+  const seat = buildSeatFigure(f, { noTag: true });
+  seat.setAttribute('id', 'seat-' + f.id);
+  seat.setAttribute('transform', `translate(${i === 0 ? 78 : 132},706)`);
+  loungeEl.appendChild(seat);
+  if (i === 0) seat.classList.add('happy');
+});
+
+/* ---------- walking: sambil mengerjakan + ambient life ---------- */
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const SPEED = 85; /* units/sec — slower so feet don't slide */
-const MAX_WALKERS = 3;
+const SPEED = 85;
+const MAX_WALKERS = 4;
 const SPOTS = {
-  meeting: { x: 200, y: 196, label: 'meja meeting' },
-  lounge: { x: 150, y: 700, label: 'lounge' },
+  meeting: { x: 200, y: 196, label: 'meja meeting', kind: 'deliver' },
+  lounge: { x: 150, y: 700, label: 'lounge', kind: 'chat' },
+  coffee: { x: 342, y: 664, label: 'coffee corner', kind: 'coffee' },
+  plant: { x: 48, y: 322, label: 'tanaman', kind: 'plant' },
 };
-function deskSpot(t) { /* stand aisle-side of a desk to deliver the handoff */
-  return { x: t.x < 200 ? t.x + 72 : t.x - 72, y: t.y + 22, label: 'meja ' + t.short };
+function deskSpot(t) {
+  return { x: t.x < 200 ? t.x + 72 : t.x - 72, y: t.y + 22, label: 'meja ' + t.short, kind: 'deliver' };
 }
-function route(from, to) { /* via the centre aisle x=200 */
+function route(from, to) {
   const pts = [];
   if (from.x !== 200) pts.push({ x: 200, y: from.y });
   if (to.x !== 200) pts.push({ x: 200, y: to.y });
   pts.push({ x: to.x, y: to.y });
   return pts.filter((p, i) => i === 0 || p.x !== pts[i - 1].x || p.y !== pts[i - 1].y);
 }
-const walkersEl = document.getElementById('walkers');
-ROLES.forEach(r => {
-  const g = document.createElementNS(NS, 'g');
-  g.setAttribute('class', 'walker');
-  g.setAttribute('id', 'walker-' + r.id);
-  g.setAttribute('style', `--shirt:${r.color};--hair:${r.hair};--skin:${r.skin}`);
-  g.innerHTML = '<g class="wflip"><use href="#walker"/></g>';
-  walkersEl.appendChild(g);
-  r.home = r.id === 'office-hours' ? { x: 200, y: 188 } : { x: r.x, y: r.y + 18 };
-  r.pos = { ...r.home };
-  r.state = 'seated'; r.facing = 1; r.destLabel = '';
-  r.seatFig = document.getElementById('seat-' + r.id);
-  r.seatFig.style.setProperty('--bobd', r.bobd + 's');
-  r.seatFig.style.setProperty('--bobdelay', r.bobdelay + 's');
-  attachOverlay(r.seatFig, 'seat', r.id);
-  r.walker = g; r.flip = g.querySelector('.wflip');
-  attachOverlay(r.flip, 'walk', r.id);
-  r.path = []; r.seg = 0; r.from = null; r.to = null; r.dist = 0; r.done = 0;
-  r.pauseT = 0; r.riseT = 0; r.settleT = 0; r.idleT = 1 + Math.random() * 6;
-});
-/* lounge friends get faces too */
-['seat-lounge-a', 'seat-lounge-b'].forEach((id, i) => {
-  const host = document.getElementById(id);
-  host.style.setProperty('--bobd', (2.4 + i * 0.5) + 's');
-  host.style.setProperty('--bobdelay', (i * 0.8) + 's');
-  const g = document.createElementNS(NS, 'g');
-  g.setAttribute('class', 'acc bob');
-  g.innerHTML = FACE_SEAT;
-  host.appendChild(g);
-  if (i === 0) host.classList.add('happy');
-});
 function walkersActive() { return ROLES.filter(r => r.state !== 'seated').length; }
 function setBubbleText(r, l1, l2) { r.bl1.textContent = l1; r.bl2.textContent = l2; }
 function restoreBubbleText(r) { setBubbleText(r, r.lines[0], r.lines[1]); }
@@ -545,15 +668,18 @@ function startTrip(r) {
   if (REDUCED || r.state !== 'seated' || walkersActive() >= MAX_WALKERS) return false;
   const roll = Math.random();
   let dest;
-  if (roll < 0.35) dest = SPOTS.meeting;
-  else if (roll < 0.5) dest = SPOTS.lounge;
+  if (roll < 0.26) dest = SPOTS.meeting;
+  else if (roll < 0.40) dest = SPOTS.lounge;
+  else if (roll < 0.54) dest = SPOTS.coffee;
+  else if (roll < 0.66) dest = SPOTS.plant;
   else { const others = ROLES.filter(o => o.id !== r.id); dest = deskSpot(others[Math.floor(Math.random() * others.length)]); }
-  r.dest = dest; r.destLabel = dest.label;
+  r.dest = dest; r.destLabel = dest.label; r.destKind = dest.kind;
   r.outPath = route(r.home, dest);
   r.backPath = route(dest, r.home);
   r.path = r.outPath; r.seg = 0;
   r.state = 'rising'; r.riseT = 0.28; r.phase = 'out';
   r.seatFig.style.opacity = 0;
+  r.walker.classList.remove('still', 'sipping', 'watering');
   r.walker.classList.add('on');
   setBubbleText(r, `Bawa ${r.shortFile}`, `ke ${dest.label}…`);
   return true;
@@ -564,6 +690,32 @@ function beginSeg(r) {
   r.dist = Math.hypot(r.to.x - r.from.x, r.to.y - r.from.y) || 1;
   r.done = 0;
   if (r.to.x !== r.from.x) r.facing = r.to.x > r.from.x ? 1 : -1;
+}
+function arrive(r) {
+  const k = r.destKind;
+  r.walker.classList.add('still');
+  setHappy(r, true);
+  if (k === 'coffee') {
+    r.state = 'sipping'; r.pauseT = 2.6;
+    r.walker.classList.add('sipping');
+    setBubbleText(r, 'ngopi dulu… ☕', 'habis ini lanjut');
+  } else if (k === 'plant') {
+    r.state = 'watering'; r.pauseT = 2.2;
+    r.walker.classList.add('watering');
+    setBubbleText(r, 'siram tanaman 🌱', 'biar seger');
+  } else if (k === 'chat') {
+    r.state = 'chatting'; r.pauseT = 2.4;
+    setBubbleText(r, 'eh, deploy aman kok', 'sprint ini lancar!');
+  } else {
+    r.state = 'paused'; r.pauseT = 1.6;
+    showPop(r.pos.x, r.pos.y);
+  }
+}
+function leaveSpot(r) {
+  hidePop();
+  r.walker.classList.remove('sipping', 'watering', 'still');
+  r.state = 'returning'; r.path = r.backPath; r.seg = 0;
+  beginSeg(r);
 }
 function stepWalk(r, dt) {
   if (r.state === 'rising') {
@@ -581,25 +733,22 @@ function stepWalk(r, dt) {
     }
     return;
   }
-  if (r.state === 'paused') {
+  if (r.state === 'paused' || r.state === 'sipping' || r.state === 'watering' || r.state === 'chatting') {
     r.pauseT -= dt;
-    if (r.pauseT <= 0) { hidePop(); r.state = 'returning'; r.path = r.backPath; r.seg = 0; r.walker.classList.remove('still'); beginSeg(r); }
+    if (r.pauseT <= 0) leaveSpot(r);
     return;
   }
   if (r.state !== 'walking' && r.state !== 'returning') return;
   r.done += SPEED * dt;
   const tRaw = Math.min(1, r.done / r.dist);
-  const t = tRaw * tRaw * (3 - 2 * tRaw); /* smoothstep: ease in + out */
+  const t = tRaw * tRaw * (3 - 2 * tRaw);
   r.pos.x = r.from.x + (r.to.x - r.from.x) * t;
   r.pos.y = r.from.y + (r.to.y - r.from.y) * t;
   if (tRaw >= 1) {
     r.seg++;
     if (r.seg >= r.path.length) {
-      if (r.phase === 'out') {
-        r.state = 'paused'; r.pauseT = 1.6; r.walker.classList.add('still');
-        showPop(r.pos.x, r.pos.y);
-        setHappy(r, true);
-      } else {
+      if (r.phase === 'out') { r.phase = 'arrived'; arrive(r); }
+      else {
         r.state = 'settling'; r.settleT = 0.3;
         r.walker.classList.remove('on');
         r.seatFig.style.opacity = 1;
@@ -611,48 +760,108 @@ const walkRing = document.getElementById('walkRing');
 const statusTextEl = document.getElementById('statusText');
 let lastStatus = '';
 let lastFrame = performance.now();
+let stretchTimer = 6, stretchTarget = null, stretchT = 0;
 function frame(now) {
   const dt = Math.min(0.05, (now - lastFrame) / 1000); lastFrame = now;
   if (!REDUCED) {
     ROLES.forEach(r => {
       if (r.state === 'seated') { r.idleT -= dt; if (r.idleT <= 0 && !startTrip(r)) r.idleT = 0.5; }
       else stepWalk(r, dt);
-      r.bubbleWrap.setAttribute('transform', `translate(${r.pos.x},${r.pos.y - 126})`);
+      const bx = Math.max(92, Math.min(308, r.pos.x));
+      r.bubbleWrap.setAttribute('transform', `translate(${bx},${r.pos.y - 126})`);
       r.walker.setAttribute('transform', `translate(${r.pos.x},${r.pos.y})`);
-      r.flip.style.transform = r.facing < 0 ? 'scale(-1,1)' : 'scale(1,1)';
+      const flip = r.walker.querySelector('.wflip');
+      if (flip) flip.style.transform = r.facing < 0 ? 'scale(-1,1)' : 'scale(1,1)';
     });
+    /* occasional stretch at the desk */
+    stretchTimer -= dt;
+    if (stretchTimer <= 0 && !stretchTarget) {
+      const seated = ROLES.filter(r => r.state === 'seated');
+      if (seated.length) { stretchTarget = seated[Math.floor(Math.random() * seated.length)]; stretchTarget.seatFig.classList.add('stretch'); stretchT = 1.6; }
+      stretchTimer = 8 + Math.random() * 6;
+    }
+    if (stretchTarget) {
+      stretchT -= dt;
+      if (stretchT <= 0) { stretchTarget.seatFig.classList.remove('stretch'); stretchTarget = null; }
+    }
     const a = ROLES[idx];
     if (a.state === 'walking' || a.state === 'returning') {
       walkRing.setAttribute('cx', a.pos.x); walkRing.setAttribute('cy', a.pos.y + 3);
       walkRing.style.opacity = 1;
     } else walkRing.style.opacity = 0;
-    const st = a.state !== 'seated'
-      ? `${a.short} lagi bawa <b>${a.shortFile}</b> ke ${a.destLabel}…`
-      : a.status;
+    let st;
+    if (celebrating) st = '🎉 <b>Sprint selesai!</b> Semua cheers — sprint baru mulai!';
+    else if (a.state === 'sipping') st = `${a.short} lagi <b>ngopi</b> di coffee corner…`;
+    else if (a.state === 'watering') st = `${a.short} lagi <b>siram tanaman</b>…`;
+    else if (a.state === 'chatting') st = `${a.short} lagi <b>ngobrol</b> di lounge…`;
+    else if (a.state !== 'seated') st = `${a.short} lagi bawa <b>${a.shortFile}</b> ke ${a.destLabel}…`;
+    else st = a.status;
     if (st !== lastStatus) { statusTextEl.innerHTML = st; lastStatus = st; }
   }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 
-/* lounge friends chat, on their own slow timer */
+/* ---------- celebration: full sprint done → everyone cheers + confetti ---------- */
+const confettiEl = document.getElementById('confetti');
+let celebrating = false;
+function celebrate() {
+  if (celebrating || REDUCED) return;
+  celebrating = true;
+  ROLES.forEach(r => { r.seatFig.classList.add('cheer'); setHappy(r, true); r.walker.classList.add('still'); });
+  const colors = ['#e74c3c', '#f39c12', '#f7c948', '#27ae60', '#3498db', '#9b59b6', '#e91e63', '#00bcd4'];
+  for (let i = 0; i < 36; i++) {
+    const p = document.createElementNS(NS, 'rect');
+    p.setAttribute('x', 20 + Math.random() * 360);
+    p.setAttribute('y', -10 - Math.random() * 40);
+    p.setAttribute('width', 5 + Math.random() * 4);
+    p.setAttribute('height', 3 + Math.random() * 3);
+    p.setAttribute('fill', colors[i % colors.length]);
+    p.style.animationDuration = (2.2 + Math.random() * 1.2) + 's';
+    p.style.animationDelay = (Math.random() * 0.5) + 's';
+    confettiEl.appendChild(p);
+  }
+  setTimeout(() => {
+    ROLES.forEach(r => { r.seatFig.classList.remove('cheer'); setHappy(r, r === ROLES[idx]); });
+    confettiEl.innerHTML = '';
+    celebrating = false;
+  }, 3000);
+}
+
+/* ---------- wall clock (real time) ---------- */
+function tickClock() {
+  const d = new Date();
+  const m = d.getMinutes() * 6 + d.getSeconds() * 0.1;
+  const h = (d.getHours() % 12) * 30 + d.getMinutes() * 0.5;
+  document.getElementById('clockMin').setAttribute('transform', `rotate(${m})`);
+  document.getElementById('clockHour').setAttribute('transform', `rotate(${h})`);
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+/* ---------- lounge friends chat ---------- */
 const loungeBubble = document.getElementById('loungeBubble');
 const loungeText = document.getElementById('loungeText');
 const LOUNGE_LINES = ['☕ ngopi dulu…', 'deploy aman kok', 'sprint ini lancar!', 'habis ini makan siang'];
 let loungeI = 0;
 if (!REDUCED) {
   setInterval(() => {
-    loungeText.textContent = LOUNGE_LINES[loungeI % LOUNGE_LINES.length]; loungeI++;
+    loungeText.textContent = LOUNGE_LINES[loungeI % LOUNGE_LINES.length];
+    loungeBubble.setAttribute('transform', `translate(${loungeI % 2 === 0 ? 78 : 132},612)`);
+    loungeI++;
     loungeBubble.style.opacity = 1;
     setTimeout(() => { loungeBubble.style.opacity = 0; }, 2600);
   }, 6000);
 }
 
+/* ---------- sprint bubble cycle ---------- */
 const rail = document.getElementById('rail');
 const statusText = document.getElementById('statusText');
 let idx = 0, timer = null;
 function show(n) {
+  const prev = idx;
   idx = (n + ROLES.length) % ROLES.length;
+  if (prev === ROLES.length - 1 && idx === 0) celebrate();
   const r = ROLES[idx];
   document.querySelectorAll('.bubble').forEach(b => b.classList.toggle('on', b.dataset.bubble === r.id));
   ROLES.forEach(x => {
@@ -661,7 +870,6 @@ function show(n) {
   });
   rail.querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.step === r.step));
   statusText.innerHTML = r.status;
-  /* the active role usually walks off carrying their handoff */
   if (Math.random() < 0.7) startTrip(r);
 }
 function next() { show(idx + 1); }
@@ -672,12 +880,22 @@ document.querySelectorAll('[data-role]').forEach(g =>
 
 /* debug hook for verification */
 window.__office = {
-  positions: () => ROLES.map(r => ({ id: r.id, x: Math.round(r.pos.x), y: Math.round(r.pos.y), state: r.state, dest: r.destLabel || null })),
+  positions: () => ROLES.map(r => ({ id: r.id, x: Math.round(r.pos.x), y: Math.round(r.pos.y), state: r.state, dest: r.destLabel || null, kind: r.destKind || null })),
   walkingCount: () => ROLES.filter(r => r.state !== 'seated').length,
   activeRole: () => ROLES[idx].id,
+  activeBubble: () => (document.querySelector('.bubble.on') || {}).dataset?.bubble || null,
   overlayCount: () => document.querySelectorAll('.acc').length,
   faceCount: () => document.querySelectorAll('.face').length,
   happyCount: () => document.querySelectorAll('.happy').length,
+  seatCount: () => document.querySelectorAll('.seatFig').length,
+  nameTagCount: () => document.querySelectorAll('.nametag').length,
+  dualMonitors: () => document.querySelectorAll('#deskOnly .screen').length,
+  clockMin: () => document.getElementById('clockMin').getAttribute('transform'),
+  celebrating: () => celebrating,
+  confettiCount: () => document.querySelectorAll('#confetti rect').length,
+  cheerCount: () => document.querySelectorAll('.cheer').length,
+  celebrate: () => celebrate(),
+  states: () => ROLES.map(r => r.state),
 };
 </script>
 </body>
