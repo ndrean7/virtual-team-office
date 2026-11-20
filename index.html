@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Virtual Office — Tim AI 0xndrean7</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #fdf6ec; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #2b2118; max-width: 480px; margin: 0 auto; padding: 0 0 24px;
+    -webkit-text-size-adjust: 100%;
+  }
+  header { padding: 16px 16px 8px; text-align: center; }
+  header h1 { font-size: 21px; letter-spacing: .5px; }
+  header p { font-size: 13px; color: #7a6a58; margin-top: 4px; }
+  .rail {
+    display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;
+    padding: 10px 12px 4px;
+  }
+  .rail span {
+    font-size: 10px; font-weight: 700; letter-spacing: .4px;
+    padding: 4px 8px; border-radius: 999px; background: #efe3d0; color: #8a7a66;
+    transition: background .3s, color .3s;
+  }
+  .rail span.on { background: #2b2118; color: #fff; }
+  .scene { width: 100%; display: block; }
+  .status {
+    margin: 10px 16px 0; padding: 10px 12px; background: #fff; border: 1px solid #eadfc9;
+    border-radius: 12px; font-size: 13px; line-height: 1.45; min-height: 42px;
+  }
+  .status b { color: #b3541e; }
+  .dots i { display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+    background: #b3541e; margin-right: 2px; animation: blink 1s infinite; }
+  .dots i:nth-child(2) { animation-delay: .2s; }
+  .dots i:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%,100% { opacity: .2; } 50% { opacity: 1; } }
+  .legend { padding: 12px 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .legend div {
+    display: flex; align-items: center; gap: 7px; font-size: 12px;
+    background: #fff; border: 1px solid #eadfc9; border-radius: 10px; padding: 7px 9px;
+  }
+  .legend i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .legend small { display: block; color: #8a7a66; font-size: 10px; }
+  footer { text-align: center; padding: 16px; font-size: 12px; color: #7a6a58; }
+  footer a { color: #b3541e; font-weight: 700; text-decoration: none; word-break: break-all; }
+
+  /* --- SVG animation --- */
+  .bob { animation: bob 2.6s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+  .screen { animation: glow 2.2s ease-in-out infinite; }
+  @keyframes glow { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
+  .plant { transform-origin: 50% 100%; transform-box: fill-box; animation: sway 4s ease-in-out infinite; }
+  @keyframes sway { 0%,100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+  .bubble { opacity: 0; transform: translateY(6px) scale(.92); transform-box: fill-box;
+    transform-origin: 50% 100%; transition: opacity .35s, transform .35s; pointer-events: none; }
+  .bubble.on { opacity: 1; transform: translateY(0) scale(1); }
+  @media (prefers-reduced-motion: reduce) {
+    .bob, .screen, .plant { animation: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>VIRTUAL OFFICE</h1>
+  <p>Tim AI 0xndrean7 — 9 role, 1 sprint. Lihat mereka kerja, live.</p>
+</header>
+<div class="rail" id="rail" aria-label="Tahap sprint">
+  <span data-step="Think">THINK</span><span data-step="Plan">PLAN</span><span data-step="Build">BUILD</span><span data-step="Review">REVIEW</span><span data-step="Test">TEST</span><span data-step="Ship">SHIP</span><span data-step="Reflect">REFLECT</span>
+</div>
+
+<svg class="scene" viewBox="0 0 400 780" role="img" aria-label="Kantor virtual isometrik dengan 9 anggota tim AI yang sedang bekerja">
+  <defs>
+    <clipPath id="floorClip">
+      <polygon points="30,60 370,60 392,360 370,700 30,700 8,360"/>
+    </clipPath>
+    <!-- Reusable seated character + desk. Shirt/hair/skin set per <use> via CSS vars. -->
+    <g id="deskUnit">
+      <rect x="-10" y="-34" width="28" height="34" rx="7" fill="#8a6a42"/>
+      <g class="bob">
+        <rect x="-12" y="-26" width="34" height="42" rx="11" style="fill:var(--shirt,#888)"/>
+        <circle cx="5" cy="-38" r="12" style="fill:var(--skin,#f2c89b)"/>
+        <path d="M -7 -38 a 12 12 0 0 1 24 0" fill="none" style="stroke:var(--hair,#2c2c2c)" stroke-width="5" stroke-linecap="round"/>
+      </g>
+      <polygon points="-58,8 58,8 70,26 -46,26" fill="#c98d4e"/>
+      <polygon points="-46,26 70,26 70,52 -46,52" fill="#a06a35"/>
+      <polygon points="-58,8 58,8 58,12 -58,12" fill="#e0aa6b"/>
+      <rect x="-52" y="-18" width="4" height="24" fill="#6b4a26"/>
+      <rect x="-68" y="-40" width="36" height="26" rx="2" fill="#1d2b36"/>
+      <rect class="screen" x="-65" y="-37" width="30" height="20" rx="1" fill="#8fd4ff"/>
+      <polygon points="-30,14 6,14 12,24 -24,24" fill="#5d4030"/>
+    </g>
+    <!-- Potted plant -->
+    <g id="plant">
+      <polygon points="-12,0 12,0 9,16 -9,16" fill="#b3541e"/>
+      <g class="plant">
+        <ellipse cx="0" cy="-14" rx="7" ry="16" fill="#2e7d32"/>
+        <ellipse cx="-9" cy="-9" rx="6" ry="12" fill="#388e3c" transform="rotate(-18 -9 -9)"/>
+        <ellipse cx="9" cy="-9" rx="6" ry="12" fill="#43a047" transform="rotate(18 9 -9)"/>
+      </g>
+    </g>
+    <!-- Lounge sofa -->
+    <g id="sofa">
+      <rect x="-52" y="-16" width="104" height="30" rx="10" fill="#d9c1a3"/>
+      <rect x="-52" y="-30" width="104" height="20" rx="9" fill="#cbb28e"/>
+      <rect x="-44" y="-12" width="26" height="16" rx="5" fill="#e8b64c"/>
+      <rect x="-13" y="-12" width="26" height="16" rx="5" fill="#7fb3d5"/>
+      <rect x="18" y="-12" width="26" height="16" rx="5" fill="#e08a7a"/>
+      <rect x="-52" y="12" width="104" height="8" rx="4" fill="#b39b7d"/>
+    </g>
+  </defs>
+
+  <!-- Floor -->
+  <polygon points="30,60 370,60 392,360 370,700 30,700 8,360" fill="#eed3a0"/>
+  <g clip-path="url(#floorClip)" stroke="#e0bd85" stroke-width="1.5">
+    <line x1="0" y1="140" x2="400" y2="140"/><line x1="0" y1="220" x2="400" y2="220"/>
+    <line x1="0" y1="300" x2="400" y2="300"/><line x1="0" y1="380" x2="400" y2="380"/>
+    <line x1="0" y1="460" x2="400" y2="460"/><line x1="0" y1="540" x2="400" y2="540"/>
+    <line x1="0" y1="620" x2="400" y2="620"/>
+  </g>
+  <!-- Glass back walls -->
+  <polygon points="30,60 200,8 200,58 30,108" fill="#bcd9ea" opacity=".55"/>
+  <polygon points="200,8 370,60 370,108 200,58" fill="#a8cfe6" opacity=".55"/>
+  <g stroke="#7fb3d5" stroke-width="1.5" opacity=".7">
+    <line x1="115" y1="34" x2="115" y2="83"/><line x1="285" y1="34" x2="285" y2="83"/>
+  </g>
+  <polygon points="30,60 370,60 370,66 30,66" fill="#8a6a42"/>
+
+  <!-- Meeting table + CEO -->
+  <g data-role="office-hours">
+    <ellipse cx="200" cy="140" rx="102" ry="30" fill="#8a5a2e"/>
+    <ellipse cx="200" cy="134" rx="102" ry="30" fill="#c98d4e"/>
+    <ellipse cx="200" cy="134" rx="86" ry="22" fill="#dbab72"/>
+    <rect x="168" y="120" width="64" height="10" rx="2" fill="#5d4030"/>
+    <g class="bob">
+      <rect x="186" y="150" width="28" height="34" rx="10" style="fill:#e74c3c"/>
+      <circle cx="200" cy="140" r="12" fill="#f2c89b"/>
+      <path d="M 188 140 a 12 12 0 0 1 24 0" fill="none" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <rect x="150" y="120" width="16" height="11" rx="1" fill="#1d2b36"/>
+    <rect class="screen" x="152" y="122" width="12" height="7" fill="#8fd4ff"/>
+    <g font-size="11" font-weight="700" text-anchor="middle" fill="#2b2118">
+      <rect x="168" y="192" width="64" height="18" rx="9" fill="#fff" stroke="#eadfc9"/>
+      <text x="200" y="205">CEO</text>
+    </g>
+  </g>
+
+  <!-- Desk rows: 2 cols x 4 rows -->
+  <g data-role="planner" transform="translate(100,250)"><use href="#deskUnit" style="--shirt:#3498db;--hair:#3b2f2f;--skin:#f2c89b"/></g>
+  <g data-role="builder" transform="translate(300,250)"><use href="#deskUnit" style="--shirt:#f39c12;--hair:#1f1f1f;--skin:#e8b88a"/></g>
+  <g data-role="reviewer" transform="translate(100,360)"><use href="#deskUnit" style="--shirt:#9b59b6;--hair:#4a2c14;--skin:#f2c89b"/></g>
+  <g data-role="qa" transform="translate(300,360)"><use href="#deskUnit" style="--shirt:#1abc9c;--hair:#2c2c2c;--skin:#d9a06b"/></g>
+  <g data-role="security-officer" transform="translate(100,470)"><use href="#deskUnit" style="--shirt:#2c3e50;--hair:#111111;--skin:#f2c89b"/></g>
+  <g data-role="finance-officer" transform="translate(300,470)"><use href="#deskUnit" style="--shirt:#27ae60;--hair:#5b3a1e;--skin:#e8b88a"/></g>
+  <g data-role="content-creator" transform="translate(100,580)"><use href="#deskUnit" style="--shirt:#e91e63;--hair:#2c2c2c;--skin:#f2c89b"/></g>
+  <g data-role="release-engineer" transform="translate(300,580)"><use href="#deskUnit" style="--shirt:#00bcd4;--hair:#3b2f2f;--skin:#d9a06b"/></g>
+
+  <!-- Active-character rings (one per role, toggled by JS) -->
+  <g fill="none" stroke="#b3541e" stroke-width="2" stroke-dasharray="6 4">
+    <ellipse id="ring-office-hours" cx="200" cy="136" rx="112" ry="36" opacity="0"/>
+    <ellipse id="ring-planner" cx="100" cy="308" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-builder" cx="300" cy="308" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-reviewer" cx="100" cy="418" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-qa" cx="300" cy="418" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-security-officer" cx="100" cy="528" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-finance-officer" cx="300" cy="528" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-content-creator" cx="100" cy="638" rx="46" ry="8" opacity="0"/>
+    <ellipse id="ring-release-engineer" cx="300" cy="638" rx="46" ry="8" opacity="0"/>
+  </g>
+
+  <!-- Desk nameplates (on the desk front, so they never cover the next row) -->
+  <g font-size="11" font-weight="700" text-anchor="middle" fill="#2b2118">
+    <g transform="translate(100,250)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Planner</text></g>
+    <g transform="translate(300,250)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Builder</text></g>
+    <g transform="translate(100,360)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Reviewer</text></g>
+    <g transform="translate(300,360)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">QA</text></g>
+    <g transform="translate(100,470)"><rect x="-46" y="30" width="92" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Security</text></g>
+    <g transform="translate(300,470)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Finance</text></g>
+    <g transform="translate(100,580)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Content</text></g>
+    <g transform="translate(300,580)"><rect x="-42" y="30" width="84" height="18" rx="9" fill="#fff" stroke="#eadfc9"/><text x="0" y="43">Release</text></g>
+  </g>
+
+  <!-- Lounge -->
+  <g transform="translate(105,712)"><use href="#sofa"/></g>
+  <ellipse cx="225" cy="716" rx="34" ry="10" fill="#8a5a2e"/>
+  <ellipse cx="225" cy="712" rx="34" ry="10" fill="#c98d4e"/>
+  <g transform="translate(330,712)"><use href="#plant"/></g>
+  <g transform="translate(60,690)"><use href="#plant"/></g>
+  <g transform="translate(368,300)"><use href="#plant"/></g>
+  <g transform="translate(32,300)"><use href="#plant"/></g>
+
+  <!-- Chat bubbles (JS fills text, toggles .on) -->
+  <g id="bubbles"></g>
+</svg>
+
+<div class="status" id="status"><span class="dots"><i></i><i></i><i></i></span> <span id="statusText">Sprint jalan…</span></div>
+
+<div class="legend" id="legend"></div>
+
+<footer>
+  9 roles. One sprint. Every step checked.<br>
+  <a href="https://github.com/ndrean7/virtual-team-skills">github.com/ndrean7/virtual-team-skills</a>
+</footer>
+
+<script>
+const ROLES = [
+  { id:'office-hours', short:'CEO', color:'#e74c3c', step:'Think', x:200, y:150, file:'.team/brief.md',
+    lines:['Brief udah siap,','lanjut ke planner'], status:'CEO lagi nulis <b>brief.md</b>…' },
+  { id:'planner', short:'Planner', color:'#3498db', step:'Plan', x:100, y:250, file:'.team/design.md',
+    lines:['Desain selesai,','builder gas!'], status:'Planner lagi nulis <b>design.md</b>…' },
+  { id:'builder', short:'Builder', color:'#f39c12', step:'Build', x:300, y:250, file:'.team/build-log.md',
+    lines:['Build kelar,','cek review ya'], status:'Builder lagi nulis <b>build-log.md</b>…' },
+  { id:'reviewer', short:'Reviewer', color:'#9b59b6', step:'Review', x:100, y:360, file:'.team/review.md',
+    lines:['Review oke,','lanjut QA'], status:'Reviewer lagi nulis <b>review.md</b>…' },
+  { id:'qa', short:'QA', color:'#1abc9c', step:'Test', x:300, y:360, file:'.team/qa-report.md',
+    lines:['QA lolos,','semua aman'], status:'QA lagi nulis <b>qa-report.md</b>…' },
+  { id:'security-officer', short:'Security', color:'#2c3e50', step:'Test', x:100, y:470, file:'.team/security-report.md',
+    lines:['Security bersih,','no celah'], status:'Security lagi nulis <b>security-report.md</b>…' },
+  { id:'finance-officer', short:'Finance', color:'#27ae60', step:'Ship', x:300, y:470, file:'.team/finance.md',
+    lines:['Budget aman,','semua tercatat'], status:'Finance lagi nulis <b>finance.md</b>…' },
+  { id:'content-creator', short:'Content', color:'#e91e63', step:'Ship', x:100, y:580, file:'.team/content.md',
+    lines:['Caption siap,','posting gas!'], status:'Content lagi nulis <b>content.md</b>…' },
+  { id:'release-engineer', short:'Release', color:'#00bcd4', step:'Reflect', x:300, y:580, file:'.team/release.md',
+    lines:['Siap deploy,','nunggu izin'], status:'Release lagi nulis <b>release.md</b>…' },
+];
+const NS = 'http://www.w3.org/2000/svg';
+const bubblesEl = document.getElementById('bubbles');
+ROLES.forEach(r => {
+  const wrap = document.createElementNS(NS, 'g');
+  wrap.setAttribute('transform', `translate(${r.x},${r.y - 108})`);
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('class', 'bubble');
+  g.setAttribute('data-bubble', r.id);
+  const w = 172, h = 56, x = -w / 2;
+  g.innerHTML =
+    `<rect x="${x}" y="0" width="${w}" height="${h}" rx="12" fill="#fff" stroke="#eadfc9"/>` +
+    `<rect x="${x + 8}" y="6" width="46" height="14" rx="7" fill="${r.color}"/>` +
+    `<text x="${x + 31}" y="16" font-size="9" font-weight="700" fill="#fff" text-anchor="middle">${r.step.toUpperCase()}</text>` +
+    `<text x="0" y="36" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[0]}</text>` +
+    `<text x="0" y="51" font-size="12.5" text-anchor="middle" fill="#2b2118">${r.lines[1]}</text>` +
+    `<polygon points="-7,${h} 7,${h} 0,${h + 9}" fill="#fff" stroke="#eadfc9"/>`;
+  wrap.appendChild(g);
+  bubblesEl.appendChild(wrap);
+});
+const legendEl = document.getElementById('legend');
+ROLES.forEach(r => {
+  const d = document.createElement('div');
+  d.innerHTML = `<i style="background:${r.color}"></i><span>${r.short}<small>${r.id} → ${r.file}</small></span>`;
+  legendEl.appendChild(d);
+});
+const rail = document.getElementById('rail');
+const statusText = document.getElementById('statusText');
+let idx = 0, timer = null;
+function show(n) {
+  idx = (n + ROLES.length) % ROLES.length;
+  const r = ROLES[idx];
+  document.querySelectorAll('.bubble').forEach(b => b.classList.toggle('on', b.dataset.bubble === r.id));
+  ROLES.forEach(x => { const ring = document.getElementById('ring-' + x.id); if (ring) ring.style.opacity = x.id === r.id ? 1 : 0; });
+  rail.querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.step === r.step));
+  statusText.innerHTML = r.status;
+}
+function next() { show(idx + 1); }
+function restart() { clearInterval(timer); timer = setInterval(next, 3000); }
+show(0); restart();
+document.querySelectorAll('[data-role]').forEach(g =>
+  g.addEventListener('click', () => { show(ROLES.findIndex(r => r.id === g.dataset.role)); restart(); }));
+</script>
+</body>
+</html>
